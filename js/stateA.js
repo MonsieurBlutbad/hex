@@ -1,3 +1,19 @@
+var Terrain = function () {
+
+};
+
+Terrain.prototype = {
+
+};
+
+var Unit = function () {
+
+};
+
+Unit.prototype = {
+
+};
+
 var States = {};
 
 States.Test = function (game) {
@@ -26,12 +42,17 @@ States.Test.prototype = {
 
                 var hexagon = game.add.sprite(world.x, world.y, 'grass');
 
+                hexagon.tile = {
+                    x: tileX,
+                    y: tileY
+                };
+
                 var points = [];
 
                 for (var i = 0; i < 6; i++) {
                     points[i] = {
-                        x: (hexagon.width/2) + (hexagon.width / 2) * Math.sin(2*Math.PI/6*i + (2*Math.PI/12)),
-                        y: (hexagon.height/2) + (hexagon.width / 2) * Math.cos(2*Math.PI/6*i + (2*Math.PI/12))
+                        x: (hexagon.width/2) + (hexagon.width/2) * Math.sin((2*Math.PI/6*i) + (2*Math.PI/12)),
+                        y: (hexagon.height/2) + (hexagon.width/2) * Math.cos((2*Math.PI/6*i) + (2*Math.PI/12))
                     };
                 }
 
@@ -53,11 +74,11 @@ States.Test.prototype = {
             }
         }
 
-        mouseOverHex = game.add.sprite(0,0,'mouseOverHex');
-        mouseOverHex.visible=false;
+        hoveredHexMarker = game.add.sprite(0,0,'mouseOverHex');
+        hoveredHexMarker.visible=false;
 
-        selectedHex = game.add.sprite(0,0,'selectedHex');
-        selectedHex.visible=false;
+        selectedHexMarker = game.add.sprite(0,0,'selectedHex');
+        selectedHexMarker.visible=false;
 
         panther = this.createAtTile(3, 3, 'panther');
 
@@ -97,15 +118,15 @@ States.Test.prototype = {
     },
 
     hexClicked: function (hex) {
-        selectedHex.visible=true;
-        selectedHex.x = hex.x;
-        selectedHex.y = hex.y;
+        selectedHexMarker.visible=true;
+        selectedHexMarker.x = hex.x;
+        selectedHexMarker.y = hex.y;
     },
 
     hexHovered: function (hex) {
-        mouseOverHex.visible=true;
-        mouseOverHex.x = hex.x;
-        mouseOverHex.y = hex.y;
+        hoveredHexMarker.visible=true;
+        hoveredHexMarker.x = hex.x;
+        hoveredHexMarker.y = hex.y;
     },
 
     createAtTile: function (tileX, tileY, spriteReference) {
@@ -117,14 +138,22 @@ States.Test.prototype = {
         if (tileX < 0 || tileY < 0 || tileX >= gridSizeX || tileY >= gridSizeY) {
             return null;
         }
-        var world = {};
-        world.x = (hexagonWidth * 0.75) * tileX;
-        world.y = hexagonHeight * tileY + ((tileX % 2) * (hexagonHeight / 2));
-        return world;
+        return {
+            x: (hexagonWidth * 0.75) * tileX,
+            y: hexagonHeight * tileY + ((tileX % 2) * (hexagonHeight / 2))
+        };
+    },
+
+    getTileCoordinates: function (worldX, worldY) {
+        return {
+            x: Math.floor(worldX / hexagonWidth),
+            y: Math.floor(worldY / hexagonHeight)
+        }
     },
 
     getHex: function (tileX, tileY) {
         return hexagonGroup.children[tileY * gridSizeX + tileX];
     }
+
 
 };

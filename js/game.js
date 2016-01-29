@@ -7,9 +7,11 @@
     var sectorWidth = hexagonWidth/4*3;
     var sectorHeight = hexagonHeight;
     var gradient = (hexagonWidth/4)/(hexagonHeight/2);
-    var mouseOverHex;
-    var selectedHex;
     var hexagonGroup;
+    var hoveredHex;
+    var selectedHex;
+    var hoveredHexMarker;
+    var selectedHexMarker;
 
     var panther;
 
