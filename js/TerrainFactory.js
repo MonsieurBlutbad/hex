@@ -23,11 +23,11 @@ TerrainFactory.prototype.createTerrain = function (tileX, tileY, spriteReference
     terrain.hitArea = new Phaser.Polygon(points);
     terrain.inputEnabled = true;
 
-    terrain.events.onInputDown.add(this.level.hexClicked, this);
+    terrain.events.onInputDown.add(this.level.hexClicked, this.level);
 
-    terrain.events.onInputOver.add(this.level.hexHovered, this);
+    terrain.events.onInputOver.add(this.level.hexHovered, this.level);
 
-    if(debug) {
+    if(DEBUG) {
         var style = { font: "12px Courier", fill: "#000000", align: "center" };
         var text = game.add.text(20, 10, tileX + ',' + tileY, style);
         terrain.addChild(text);

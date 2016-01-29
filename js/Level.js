@@ -5,10 +5,23 @@ var Level = function (game) {
     };
     this.terrainFactory;
     this.unitFactory;
+    this.hexagonGroup;
+    this.selectedHex;
+    this.hoveredHexMarker;
+    this.selectedHexMarker;
+    this.overlay;
+    this.worldBounds;
 };
 
 
 Level.prototype = {
+
+    init: function () {
+        this.worldBounds = {
+            x: this.grid.x * (HEX_WIDTH * 0.75) + OVERLAY_WIDTH + (HEX_WIDTH * 0.25),
+            y: this.grid.y * HEX_HEIGHT + (HEX_HEIGHT / 2)
+        }
+    },
 
     preload: function() {
         game.time.advancedTiming = true;
@@ -22,7 +35,7 @@ Level.prototype = {
 
     create: function() {
 
-        game.stage.backgroundColor = '#ccc';
+        game.stage.backgroundColor = BACKGROUND_COLOR;
 
         this.createTerrain();
 
@@ -32,18 +45,18 @@ Level.prototype = {
 
         this.createOverlay();
 
-        hoveredHexMarker = game.add.sprite(0,0,'mouseOverHex');
-        hoveredHexMarker.visible=false;
+        this.hoveredHexMarker = game.add.sprite(0,0,'mouseOverHex');
+        this.hoveredHexMarker.visible=false;
 
-        selectedHexMarker = game.add.sprite(0,0,'selectedHex');
-        selectedHexMarker.visible=false;
+        this.selectedHexMarker = game.add.sprite(0,0,'selectedHex');
+        this.selectedHexMarker.visible=false;
 
 
         game.input.mouse.capture = true;
 
         cursors = game.input.keyboard.createCursorKeys();
 
-        game.world.setBounds(0, 0, 2000, 2000);
+        game.world.setBounds(0, 0, this.worldBounds.x, this.worldBounds.y);
 
     },
 
@@ -55,12 +68,18 @@ Level.prototype = {
 
     createOverlay: function () {
         var graphicOverlay = new Phaser.Graphics(this.game, 0 , 0);
-        graphicOverlay.beginFill(0x000000, 0.7);
-        graphicOverlay.drawRect(0, 0, 266, 600);
+        graphicOverlay.beginFill(0x222222);
+        graphicOverlay.drawRect(0, 0, OVERLAY_WIDTH, HEIGHT);
         graphicOverlay.endFill();
         this.overlay = this.game.add.image(800, 0, graphicOverlay.generateTexture());
         this.overlay.fixedToCamera = true;
         this.overlay.inputEnabled = true;
+        var graphicOverlayShadow = new Phaser.Graphics(this.game, 0 , 0);
+        graphicOverlayShadow.beginFill(0x222222, 0.5);
+        graphicOverlayShadow.drawRect(-HEX_WIDTH / 16, 0, HEX_WIDTH / 16, HEIGHT);
+        graphicOverlayShadow.endFill();
+        this.overlay.addChild(graphicOverlayShadow);
+
     },
 
     update: function () {
@@ -83,7 +102,9 @@ Level.prototype = {
     },
 
     render: function() {
-        this.renderFps();
+        if(DEBUG) {
+            this.renderFps();
+        }
     },
 
     renderFps: function() {
@@ -92,31 +113,31 @@ Level.prototype = {
     },
 
     hexClicked: function (hex) {
-        selectedHexMarker.visible=true;
-        selectedHexMarker.x = hex.x;
-        selectedHexMarker.y = hex.y;
+        this.selectedHexMarker.visible = true;
+        this.selectedHexMarker.x = hex.x;
+        this.selectedHexMarker.y = hex.y;
     },
 
     hexHovered: function (hex) {
-        hoveredHexMarker.visible=true;
-        hoveredHexMarker.x = hex.x;
-        hoveredHexMarker.y = hex.y;
+        this.hoveredHexMarker.visible = true;
+        this.hoveredHexMarker.x = hex.x;
+        this.hoveredHexMarker.y = hex.y;
     },
 
     getWorldCoordinates: function (tileX, tileY) {
-        if (tileX < 0 || tileY < 0 || tileX >= gridSizeX || tileY >= gridSizeY) {
+        if (tileX < 0 || tileY < 0 || tileX >= this.grid.x || tileY >= this.grid.y) {
             return null;
         }
         return {
-            x: (hexagonWidth * 0.75) * tileX,
-            y: hexagonHeight * tileY + ((tileX % 2) * (hexagonHeight / 2))
+            x: (HEX_WIDTH * 0.75) * tileX,
+            y: HEX_HEIGHT * tileY + ((tileX % 2) * (HEX_HEIGHT / 2))
         };
     },
 
     getTileCoordinates: function (worldX, worldY) {
         return {
-            x: Math.floor(worldX / hexagonWidth),
-            y: Math.floor(worldY / hexagonHeight)
+            x: Math.floor(worldX / HEX_WIDTH),
+            y: Math.floor(worldY / HEX_HEIGHT)
         }
     },
 

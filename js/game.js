@@ -1,23 +1,18 @@
+    const WIDTH = 1066;
 
-    var hexagonWidth = 80;
-    var hexagonHeight = 70;
-    var gridSizeX = 20;
-    var gridSizeY = 15;
-    var moveIndex;
-    var sectorWidth = hexagonWidth/4*3;
-    var sectorHeight = hexagonHeight;
-    var gradient = (hexagonWidth/4)/(hexagonHeight/2);
-    var hexagonGroup;
-    var hoveredHex;
-    var selectedHex;
-    var hoveredHexMarker;
-    var selectedHexMarker;
+    const HEIGHT = 600;
 
-    var panther;
+    const HEX_WIDTH = 80;
 
-    var debug = true;
+    const HEX_HEIGHT = 70;
 
-    var game = new Phaser.Game(1066, 600);
+    const OVERLAY_WIDTH = 266;
+
+    const DEBUG = true;
+
+    const BACKGROUND_COLOR = '#999';
+
+    var game = new Phaser.Game(WIDTH, HEIGHT);
 
     game.state.add('Test', States.Test);
 
