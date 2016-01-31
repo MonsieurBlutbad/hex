@@ -6,8 +6,6 @@ States.Test = function (game) {
         x: 19,
         y: 15
     };
-    this.terrainFactory = new TerrainFactory(this);
-    this.unitFactory = new UnitFactory(this);
 };
 
 States.Test.prototype = new Level();

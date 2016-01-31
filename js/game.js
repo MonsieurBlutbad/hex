@@ -1,19 +1,28 @@
-    const WIDTH = 1066;
+const WIDTH = 1066;
 
-    const HEIGHT = 600;
+const HEIGHT = 600;
 
-    const HEX_WIDTH = 80;
+const HEX_WIDTH = 80;
 
-    const HEX_HEIGHT = 70;
+const HEX_HEIGHT = 70;
 
-    const OVERLAY_WIDTH = 266;
+const OVERLAY_WIDTH = 266;
 
-    const DEBUG = true;
+const DEBUG = true;
 
-    const BACKGROUND_COLOR = '#999';
+const BACKGROUND_COLOR = '#999';
 
-    var game = new Phaser.Game(WIDTH, HEIGHT);
+var game = new Phaser.Game(WIDTH, HEIGHT);
 
-    game.state.add('Test', States.Test);
+game.state.add('Test', States.Test);
 
-    game.state.start('Test');
+game.state.start('Test');
+
+
+window.onload = function () {
+
+    var body = document.getElementById('body');
+
+    body.style.width = WIDTH + 'px';
+
+};

@@ -27,6 +27,8 @@ TerrainFactory.prototype.createTerrain = function (tileX, tileY, spriteReference
 
     terrain.events.onInputOver.add(this.level.hexHovered, this.level);
 
+    terrain.events.onInputOut.add(this.level.hexLeft, this.level);
+
     if(DEBUG) {
         var style = { font: "12px Courier", fill: "#000000", align: "center" };
         var text = game.add.text(20, 10, tileX + ',' + tileY, style);
@@ -38,6 +40,7 @@ TerrainFactory.prototype.createTerrain = function (tileX, tileY, spriteReference
 
 TerrainFactory.prototype.createGrass = function (tileX, tileY) {
     var grass = this.createTerrain(tileX, tileY, 'grass');
-    grass.moveability = 5;
+    grass.name = 'Grass';
+    grass.movementCost = 5;
     return grass;
 };

@@ -19,6 +19,6 @@ UnitFactory.prototype.createPanther = function (tileX, tileY) {
     var panther = this.createUnit(tileX, tileY, 'panther');
     panther.attack = 10;
     panther.defense = 3;
-    panther.movement = 6;
+    panther.movement = 20;
     panther.type = 'tank';
 };

@@ -3,13 +3,22 @@ var Level = function (game) {
         x: undefined,
         y: undefined
     };
-    this.terrainFactory;
-    this.unitFactory;
+    this.terrainFactory = new TerrainFactory(this);
+    this.unitFactory = new UnitFactory(this);
     this.hexagonGroup;
     this.selectedHex;
     this.hoveredHexMarker;
     this.selectedHexMarker;
     this.overlay;
+    this.overlayText = {
+        terrain: {
+            name: '',
+            movementCost: ''
+        },
+        unit: {
+            name: ''
+        }
+    };
     this.worldBounds;
 };
 
@@ -79,7 +88,17 @@ Level.prototype = {
         graphicOverlayShadow.drawRect(-HEX_WIDTH / 16, 0, HEX_WIDTH / 16, HEIGHT);
         graphicOverlayShadow.endFill();
         this.overlay.addChild(graphicOverlayShadow);
+        this.createOverlayText();
 
+    },
+
+    createOverlayText: function () {
+        var marginLeft = 20;
+        var style = { font: '16px Courier', fill: '#ccc', align: 'left'};
+        this.overlayText.terrain.name = game.add.text( marginLeft, 50, 'Terrain', style);
+        this.overlayText.terrain.movementCost = game.add.text( marginLeft, 70, 'Movement', style);
+        this.overlay.addChild(this.overlayText.terrain.name);
+        this.overlay.addChild(this.overlayText.terrain.movementCost);
     },
 
     update: function () {
@@ -122,6 +141,17 @@ Level.prototype = {
         this.hoveredHexMarker.visible = true;
         this.hoveredHexMarker.x = hex.x;
         this.hoveredHexMarker.y = hex.y;
+        this.overlayText.terrain.name.setText(hex.name);
+        this.overlayText.terrain.movementCost.setText(hex.movementCost);
+        this.overlayText.terrain.name.visible = true;
+        this.overlayText.terrain.movementCost.visible = true;
+    },
+
+    hexLeft: function (hex) {
+        this.hoveredHexMarker.visible = false;
+        this.overlayText.terrain.name.visible = false;
+        this.overlayText.terrain.movementCost.visible = false;
+
     },
 
     getWorldCoordinates: function (tileX, tileY) {
