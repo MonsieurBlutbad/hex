@@ -1,17 +1,16 @@
 var Level = function () {
     this.grid = {
-        x: undefined,
-        y: undefined
+        x: null,
+        y: null
     };
-    this.hexFactory = new HexFactory(this);
-    this.terrainFactory = new TerrainFactory(this);
-    this.unitFactory = new UnitFactory(this);
     this.hexGroup;
     this.terrainGroup;
     this.unitGroup;
     this.selectedHex;
     this.hoveredHexMarker;
     this.selectedHexMarker;
+    this.selectedHex;
+    this.hoveredHex;
     this.overlay;
     this.worldBounds;
     this.hex = [[]];
@@ -74,11 +73,10 @@ Level.prototype = {
     },
 
     createGrid: function() {
-        this.hexGroup.zIndex = 1;
         for (var tileX = 0; tileX < this.grid.x; tileX++) {
             this.hex[tileX] = [];
             for (var tileY = 0; tileY < this.grid.y; tileY ++) {
-                this.hex[tileX][tileY] = this.hexFactory.createHex(tileX, tileY);
+                this.hex[tileX][tileY] = new Hex(this, tileX, tileY); //this.hexFactory.createHex(tileX, tileY);
                 this.hexGroup.add(this.hex[tileX][tileY]);
             }
         }
@@ -124,12 +122,14 @@ Level.prototype = {
     },
 
     hexClicked: function (hex) {
+        this.selectedHex = hex;
         this.selectedHexMarker.visible = true;
         this.selectedHexMarker.x = hex.x;
         this.selectedHexMarker.y = hex.y;
     },
 
     hexHovered: function (hex) {
+        this.hoveredHex = hex;
         this.hoveredHexMarker.visible = true;
         this.hoveredHexMarker.x = hex.x;
         this.hoveredHexMarker.y = hex.y;
@@ -138,6 +138,7 @@ Level.prototype = {
     },
 
     hexLeft: function (hex) {
+        this.hoveredHex = null;
         this.hoveredHexMarker.visible = false;
         this.overlay.hideText();
     },
@@ -150,13 +151,6 @@ Level.prototype = {
             x: (HEX_WIDTH * 0.75) * tileX,
             y: HEX_HEIGHT * tileY + ((tileX % 2) * (HEX_HEIGHT / 2))
         };
-    },
-
-    getTileCoordinates: function (worldX, worldY) {
-        return {
-            x: Math.floor(worldX / HEX_WIDTH),
-            y: Math.floor(worldY / HEX_HEIGHT)
-        }
     },
 
 };

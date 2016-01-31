@@ -14,14 +14,13 @@ const BACKGROUND_COLOR = '#999';
 
 var game = new Phaser.Game(WIDTH, HEIGHT);
 
-game.state.add('Test', States.Test);
-
-game.state.start('Test');
-
-
 window.onload = function () {
 
     var body = document.getElementById('body');
+
+    game.state.add('Test', States.Test);
+
+    game.state.start('Test');
 
     body.style.width = WIDTH + 'px';
 

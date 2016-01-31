@@ -19,20 +19,18 @@ level.loadAssets = function () {
 };
 
 level.createTerrain = function() {
-    this.terrainGroup.zIndex = 0;
     for (var tileY = 0; tileY < this.grid.y; tileY ++) {
         for (var tileX = 0; tileX < this.grid.x; tileX ++) {
-            var terrain = this.terrainFactory.createGrass(tileX, tileY);
+            var terrain = new Grass(this, tileX, tileY);
             this.terrainGroup.add(terrain);
-            this.hex[tileX][tileY].terrain = terrain;
+            this.hex[tileX][tileY].setTerrain(terrain);
         }
     }
 };
 
 level.createUnits = function() {
-    this.unitGroup.zIndex = 2;
-    var panther = this.unitFactory.createPanther(3, 3);
+    var panther = new Panther(this, 3, 3);
     this.unitGroup.add(panther);
-    this.hex[3][3].unit = panther;
+    this.hex[3][3].setUnit(panther);
 };
 
