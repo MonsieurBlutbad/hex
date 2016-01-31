@@ -13,15 +13,6 @@ var Level = function () {
     this.hoveredHexMarker;
     this.selectedHexMarker;
     this.overlay;
-    this.overlayText = {
-        terrain: {
-            name: '',
-            movementCost: ''
-        },
-        unit: {
-            name: ''
-        }
-    };
     this.worldBounds;
     this.hex = [[]];
 
@@ -98,32 +89,9 @@ Level.prototype = {
     createUnits: function() {},
 
     createOverlay: function () {
-        var graphicOverlay = new Phaser.Graphics(this.game, 0 , 0);
-        graphicOverlay.beginFill(0x222222);
-        graphicOverlay.drawRect(0, 0, OVERLAY_WIDTH, HEIGHT);
-        graphicOverlay.endFill();
-        this.overlay = this.game.add.image(800, 0, graphicOverlay.generateTexture());
-        this.overlay.fixedToCamera = true;
-        this.overlay.inputEnabled = true;
-        var graphicOverlayShadow = new Phaser.Graphics(this.game, 0 , 0);
-        graphicOverlayShadow.beginFill(0x222222, 0.5);
-        graphicOverlayShadow.drawRect(-HEX_WIDTH / 16, 0, HEX_WIDTH / 16, HEIGHT);
-        graphicOverlayShadow.endFill();
-        this.overlay.addChild(graphicOverlayShadow);
-        this.createOverlayText();
-
+        this.overlay = new Overlay(this);
     },
 
-    createOverlayText: function () {
-        var marginLeft = 20;
-        var style = { font: '16px Courier', fill: '#ccc', align: 'left'};
-        this.overlayText.terrain.name = game.add.text( marginLeft, 50, 'Terrain', style);
-        this.overlayText.terrain.movementCost = game.add.text( marginLeft, 70, 'Movement', style);
-        this.overlayText.unit.name = game.add.text( marginLeft, 90, 'Unit', style);
-        this.overlay.addChild(this.overlayText.terrain.name);
-        this.overlay.addChild(this.overlayText.terrain.movementCost);
-        this.overlay.addChild(this.overlayText.unit.name);
-    },
 
     update: function () {
         this.updateCamera();
@@ -165,23 +133,13 @@ Level.prototype = {
         this.hoveredHexMarker.visible = true;
         this.hoveredHexMarker.x = hex.x;
         this.hoveredHexMarker.y = hex.y;
-        this.overlayText.terrain.name.setText(hex.terrain.name);
-        this.overlayText.terrain.movementCost.setText(hex.terrain.movementCost);
-        if (hex.unit) {
-            this.overlayText.unit.name.setText(hex.unit.name);
-            this.overlayText.unit.name.visible = true;
-        } else
-            this.overlayText.unit.name.setText('');
-        this.overlayText.terrain.name.visible = true;
-        this.overlayText.terrain.movementCost.visible = true;
+        this.overlay.updateText(hex);
+        this.overlay.showText();
     },
 
     hexLeft: function (hex) {
         this.hoveredHexMarker.visible = false;
-        this.overlayText.terrain.name.visible = false;
-        this.overlayText.terrain.movementCost.visible = false;
-        this.overlayText.unit.name.visible = false;
-
+        this.overlay.hideText();
     },
 
     getWorldCoordinates: function (tileX, tileY) {
