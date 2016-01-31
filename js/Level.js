@@ -90,7 +90,6 @@ Level.prototype = {
         this.overlay = new Overlay(this);
     },
 
-
     update: function () {
         this.updateCamera();
     },

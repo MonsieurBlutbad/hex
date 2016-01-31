@@ -1,9 +1,14 @@
 var Terrain = function (level, tileX, tileY) {
     this.level = level;
 
+    this.tile = {
+        x: tileX,
+        y: tileY
+    }
+
     this.init();
 
-    var world = this.level.getWorldCoordinates(tileX, tileY);
+    var world = this.level.getWorldCoordinates(this.tile.x, this.tile.y);
 
     Phaser.Sprite.call(this, game, world.x, world.y, this.spriteReference);
 };
@@ -14,17 +19,4 @@ Terrain.prototype.init = function() {
     this.name = 'Terrain';
     this.spriteReference = null;
     this.movementCost = 0;
-};
-
-var Grass = function (level, tileX, tileY) {
-    Terrain.apply(this, arguments);
-};
-
-Grass.prototype = Object.create(Terrain.prototype);
-
-Grass.prototype.init = function() {
-    this.name = 'Grass';
-    this.spriteReference = 'grass';
-    this.movementCost = 5;
-
 };

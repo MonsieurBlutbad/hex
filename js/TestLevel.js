@@ -32,5 +32,9 @@ level.createUnits = function() {
     var panther = new Panther(this, 3, 3);
     this.unitGroup.add(panther);
     this.hex[3][3].setUnit(panther);
+    this.panther = panther;
 };
 
+level.update = function () {
+    this.updateCamera();
+};
