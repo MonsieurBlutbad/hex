@@ -7,6 +7,7 @@ var Level = function () {
     this.terrainGroup;
     this.unitGroup;
     this.selectedHex;
+    this.selectedUnit;
     this.hoveredHexMarker;
     this.selectedHexMarker;
     this.selectedHex;
@@ -121,10 +122,27 @@ Level.prototype = {
     },
 
     hexClicked: function (hex) {
+        if(this.selectedHex === hex) {
+            this.selectedHex = null;
+            this.selectedUnit = null;
+            this.selectedHexMarker.visible = false;
+        } else {
+
         this.selectedHex = hex;
         this.selectedHexMarker.visible = true;
         this.selectedHexMarker.x = hex.x;
         this.selectedHexMarker.y = hex.y;
+
+        if(hex.hasUnit())
+            this.selectedUnit = hex.getUnit();
+        else
+            if(this.selectedUnit)
+                this.selectedUnit.moveTo(hex);
+
+        }
+
+        this.overlay.updateText(this.selectedHex);
+        this.overlay.showText();
     },
 
     hexHovered: function (hex) {
@@ -132,14 +150,11 @@ Level.prototype = {
         this.hoveredHexMarker.visible = true;
         this.hoveredHexMarker.x = hex.x;
         this.hoveredHexMarker.y = hex.y;
-        this.overlay.updateText(hex);
-        this.overlay.showText();
     },
 
     hexLeft: function (hex) {
         this.hoveredHex = null;
         this.hoveredHexMarker.visible = false;
-        this.overlay.hideText();
     },
 
     getWorldCoordinates: function (tileX, tileY) {
