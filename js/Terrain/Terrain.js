@@ -4,7 +4,7 @@ var Terrain = function (level, tileX, tileY) {
     this.tile = {
         x: tileX,
         y: tileY
-    }
+    };
 
     this.init();
 
@@ -20,3 +20,4 @@ Terrain.prototype.init = function() {
     this.spriteReference = null;
     this.movementCost = 0;
 };
+

@@ -1,9 +1,9 @@
-var Unit =function (level, tileX, tileY) {
+var Unit = function (level, tileX, tileY) {
     this.level = level;
     this.tile = {
         x: tileX,
         y: tileY
-    }
+    };
 
     this.init();
 
@@ -12,6 +12,12 @@ var Unit =function (level, tileX, tileY) {
     Phaser.Sprite.call(this, game, world.x, world.y, this.spriteReference);
 
     this.createHitpointOverlay();
+
+    this.highlight = game.add.sprite(0, 0, this.spriteReference);
+    this.highlight.tint = 0x00ff00;
+    this.highlight.alpha = 0.2;
+    this.highlight.visible = false;
+    this.addChild(this.highlight);
 };
 
 Unit.prototype = Object.create(Phaser.Sprite.prototype);
@@ -77,4 +83,55 @@ Unit.prototype.moveTo = function(hex) {
     this.y = world.y;
 
     this.level.hex[this.tile.x][this.tile.y].setUnit(this);
+};
+
+Unit.prototype.getMoveableHexes = function() {
+    var self = this;
+    var start = this.level.hex[this.tile.x][this.tile.y];
+    var frontier = new Hashtable();
+    frontier.put(start, 0);
+    var cameFrom = new Hashtable();
+    var costSoFar = new Hashtable();
+    cameFrom.put(start, 0);
+    costSoFar.put(start, 0);
+
+    while (frontier.size() > 0) {
+        var current = frontier.entries()[0][0];
+        frontier.remove(current);
+        var neighbours = current.getAdjacentHexes();
+        neighbours.forEach( function(next) {
+            if(next.isMoveable()) {
+                var newCost = costSoFar.get(current) + next.terrain.movementCost;
+                if(newCost <= self.movement) {
+                    if( ! costSoFar.containsKey(next) || newCost < costSoFar.get(next)) {
+                        costSoFar.put(next, newCost);
+                        frontier.put(next, newCost);
+                        cameFrom.put(next, current);
+                    }
+                }
+            }
+        });
+    }
+
+    costSoFar.remove(start);
+
+    costSoFar.entries().forEach( function(entry) {
+        var hex = entry[0];
+        var cost = entry[1];
+        hex.setHighlight(true);
+        if(DEBUG)
+            hex.debugPathfinder.setText(cost);
+    });
+
+};
+
+Unit.prototype.select = function() {
+    this.isSelected = true;
+    this.highlight.visible = true;
+    this.getMoveableHexes();
+};
+
+Unit.prototype.deselect = function() {
+    this.isSelected = false;
+    this.highlight.visible = false;
 };

@@ -11,5 +11,5 @@ Grass.prototype = Object.create(Terrain.prototype);
 Grass.prototype.init = function() {
     this.name = 'Grass';
     this.spriteReference = 'grass';
-    this.movementCost = 5;
+    this.movementCost = 7;
 };

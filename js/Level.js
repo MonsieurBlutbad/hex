@@ -1,7 +1,7 @@
 var Level = function () {
     this.grid = {
-        x: null,
-        y: null
+        width: null,
+        height: null
     };
     this.hexGroup;
     this.terrainGroup;
@@ -23,8 +23,8 @@ Level.prototype = {
 
     init: function () {
         this.worldBounds = {
-            x: this.grid.x * (HEX_WIDTH * 0.75) + OVERLAY_WIDTH + (HEX_WIDTH * 0.25),
-            y: this.grid.y * HEX_HEIGHT + (HEX_HEIGHT / 2)
+            x: this.grid.width * (HEX_WIDTH * 0.75) + OVERLAY_WIDTH + (HEX_WIDTH * 0.25),
+            y: this.grid.height * HEX_HEIGHT + (HEX_HEIGHT / 2)
         }
     },
 
@@ -74,10 +74,10 @@ Level.prototype = {
     },
 
     createGrid: function() {
-        for (var tileX = 0; tileX < this.grid.x; tileX++) {
+        for (var tileX = 0; tileX < this.grid.width; tileX++) {
             this.hex[tileX] = [];
-            for (var tileY = 0; tileY < this.grid.y; tileY ++) {
-                this.hex[tileX][tileY] = new Hex(this, tileX, tileY); //this.hexFactory.createHex(tileX, tileY);
+            for (var tileY = 0; tileY < this.grid.height; tileY ++) {
+                this.hex[tileX][tileY] = new Hex(this, tileX, tileY);
                 this.hexGroup.add(this.hex[tileX][tileY]);
             }
         }
@@ -123,26 +123,47 @@ Level.prototype = {
 
     hexClicked: function (hex) {
         if(this.selectedHex === hex) {
-            this.selectedHex = null;
-            this.selectedUnit = null;
-            this.selectedHexMarker.visible = false;
+            this.deselectHex();
         } else {
+            this.selectHex(hex);
+        }
 
+        this.overlay.updateText(this.selectedHex);
+        this.overlay.showText();
+    },
+
+    selectHex: function(hex) {
         this.selectedHex = hex;
         this.selectedHexMarker.visible = true;
         this.selectedHexMarker.x = hex.x;
         this.selectedHexMarker.y = hex.y;
 
-        if(hex.hasUnit())
-            this.selectedUnit = hex.getUnit();
-        else
-            if(this.selectedUnit)
-                this.selectedUnit.moveTo(hex);
-
+        if (hex.hasUnit())
+            this.selectUnit(hex.getUnit());
+        else if (this.selectedUnit) {
+            this.selectedUnit.moveTo(hex);
+            this.deselectHex();
         }
+    },
 
-        this.overlay.updateText(this.selectedHex);
-        this.overlay.showText();
+    deselectHex: function() {
+        this.selectedHex = null;
+        this.selectedHexMarker.visible = false;
+        this.deselectUnit();
+    },
+
+    selectUnit: function(unit) {
+        if(this.selectedUnit)
+            this.deselectUnit();
+        this.selectedUnit = unit;
+        this.selectedUnit.select();
+    },
+
+    deselectUnit: function() {
+        if(this.selectedUnit) {
+            this.selectedUnit.deselect();
+            this.selectedUnit = null;
+        }
     },
 
     hexHovered: function (hex) {
@@ -158,7 +179,7 @@ Level.prototype = {
     },
 
     getWorldCoordinates: function (tileX, tileY) {
-        if (tileX < 0 || tileY < 0 || tileX >= this.grid.x || tileY >= this.grid.y) {
+        if (tileX < 0 || tileY < 0 || tileX >= this.grid.width || tileY >= this.grid.height) {
             return null;
         }
         return {
