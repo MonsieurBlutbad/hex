@@ -30,8 +30,7 @@ Level.prototype = {
 
     preload: function() {
         game.time.advancedTiming = true;
-        game.load.image('hex', 'sprites/hex.png');
-        game.load.image('mouseOverHex', 'sprites/mouseOverHex.png');
+        game.load.image('mouseOverHex', 'sprites/hoveredHexMarker.png');
         game.load.image('selectedHex', 'sprites/selectedHex.png');
 
         this.loadAssets();
@@ -59,11 +58,11 @@ Level.prototype = {
 
         this.createOverlay();
 
-        this.hoveredHexMarker = game.add.sprite(0,0,'mouseOverHex');
-        this.hoveredHexMarker.visible=false;
-
         this.selectedHexMarker = game.add.sprite(0,0,'selectedHex');
         this.selectedHexMarker.visible=false;
+
+        this.hoveredHexMarker = game.add.sprite(0,0,'mouseOverHex');
+        this.hoveredHexMarker.visible=false;
 
         game.input.mouse.capture = true;
 
