@@ -95,7 +95,7 @@ Unit.prototype.showMoveableHexes = function() {
     var frontier = new Hashtable();
     frontier.put(start, 0);
     var cameFrom = new Hashtable();
-    this.moveableHexes = new Hashtable();
+    this.moveableHexes.clear();
     cameFrom.put(start, 0);
     this.moveableHexes.put(start, 0);
 
@@ -126,6 +126,12 @@ Unit.prototype.showMoveableHexes = function() {
         self.deselectEvent.add(hex.hideMoveable, hex);
         self.finishMoveEvent.add(hex.hideMoveable, hex);
     });
+
+    this.finishMoveEvent.add(
+        function() {
+            this.moveableHexes.clear();
+        }, this
+    );
 
 };
 
