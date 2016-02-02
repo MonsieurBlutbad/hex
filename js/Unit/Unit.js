@@ -18,6 +18,12 @@ var Unit = function (level, tileX, tileY) {
     this.highlight.alpha = 0.2;
     this.highlight.visible = false;
     this.addChild(this.highlight);
+
+    this.startMoveEvent = new Phaser.Signal();
+    this.finishMoveEvent = new Phaser.Signal();
+    this.selectEvent = new Phaser.Signal();
+    this.selectEvent.add(this.showMoveableHexes, this);
+    this.deselectEvent = new Phaser.Signal();
 };
 
 Unit.prototype = Object.create(Phaser.Sprite.prototype);
@@ -85,7 +91,7 @@ Unit.prototype.moveTo = function(hex) {
     this.level.hex[this.tile.x][this.tile.y].setUnit(this);
 };
 
-Unit.prototype.getMoveableHexes = function() {
+Unit.prototype.showMoveableHexes = function() {
     var self = this;
     var start = this.level.hex[this.tile.x][this.tile.y];
     var frontier = new Hashtable();
@@ -118,9 +124,9 @@ Unit.prototype.getMoveableHexes = function() {
     costSoFar.entries().forEach( function(entry) {
         var hex = entry[0];
         var cost = entry[1];
-        hex.setHighlight(true);
-        if(DEBUG)
-            hex.debugPathfinder.setText(cost);
+        hex.showMoveable(cost);
+        self.deselectEvent.add(hex.hideMoveable, hex);
+        self.finishMoveEvent.add(hex.hideMoveable, hex);
     });
 
 };
@@ -128,10 +134,18 @@ Unit.prototype.getMoveableHexes = function() {
 Unit.prototype.select = function() {
     this.isSelected = true;
     this.highlight.visible = true;
-    this.getMoveableHexes();
+
+    this.selectEvent.dispatch(this);
 };
 
 Unit.prototype.deselect = function() {
     this.isSelected = false;
     this.highlight.visible = false;
+
+    this.deselectEvent.dispatch(this);
+};
+
+Unit.prototype.moveTo = function(tileX, tileY) {
+    this.startMoveEvent.dispatch(this);
+    this.finishMoveEvent.dispatch(this);
 };

@@ -34,25 +34,7 @@ var Hex = function (level, tileX, tileY) {
 
     this.events.onInputOut.add(this.level.hexLeft, this.level);
 
-    this.highlightGroup = game.add.group();
-
-    this.highlight = game.add.graphics(0, 0);
-    this.highlight.beginFill(0xffffff, 1);
-    this.highlight.drawPolygon(geometry.points);
-    this.highlight.endFill();
-    this.highlight.alpha = 0.2;
-    this.highlight.visible = false;
-    this.highlightGroup.add(this.highlight);
-
-    this.moveableHex = game.add.graphics(0,0);
-    this.moveableHex.lineStyle(0);
-    this.moveableHex.beginFill(0x333333, 1);
-    this.moveableHex.drawCircle(this.width / 2, this.height / 2, this.width / 8);
-    this.moveableHex.endFill();
-    this.moveableHex.visible = false;
-    this.highlightGroup.add(this.moveableHex);
-
-    this.addChild(this.highlightGroup);
+    this.createMoveableMarker(geometry);
 
     if(DEBUG) {
         var style = { font: "12px Courier", fill: "#fff", align: "center" };
@@ -60,41 +42,74 @@ var Hex = function (level, tileX, tileY) {
         this.addChild(text);
     }
 
-    if(DEBUG) {
-        var style = { font: "16px Courier", fill: "#bbf", align: "center" };
-        this.debugPathfinder = game.add.text(20, 40, '', style);
-        this.addChild(this.debugPathfinder);
-    }
-
     game.add.existing(this);
 };
 
+
 Hex.prototype = Object.create(Phaser.Graphics.prototype);
+
+
+Hex.prototype.createMoveableMarker = function(geometry) {
+    this.moveableMarkerGroup = game.add.group();
+
+    var background = game.add.graphics(0, 0);
+    background.beginFill(0xffffff, 1);
+    background.drawPolygon(geometry.points);
+    background.endFill();
+    background.alpha = 0.2;
+    background.visible = false;
+    this.moveableMarkerGroup.add(background);
+
+    var dot = game.add.graphics(0,0);
+    dot.lineStyle(0);
+    dot.beginFill(0x333333, 1);
+    dot.drawCircle(this.width / 2, this.height / 2, this.width / 8);
+    dot.endFill();
+    dot.visible = false;
+    this.moveableMarkerGroup.add(dot);
+
+    if(DEBUG) {
+        var style = { font: "16px Courier", fill: "#bbf", align: "center" };
+        this.debugPathfinder = game.add.text(20, 40, '', style);
+        this.debugPathfinder.visible = false;
+        this.moveableMarkerGroup.addChild(this.debugPathfinder);
+    }
+
+    this.addChild(this.moveableMarkerGroup);
+
+};
+
 
 Hex.prototype.setTerrain = function(terrain) {
     this.terrain = terrain;
 };
 
+
 Hex.prototype.getTerrain = function() {
     return this.terrain;
 };
+
 
 Hex.prototype.setUnit = function(unit) {
     this.unit = unit;
 };
 
+
 Hex.prototype.getUnit = function() {
     return this.unit;
 };
+
 
 Hex.prototype.hasUnit = function() {
     // todo instanceof Unit
     return this.unit !== undefined && this.unit !== null;
 };
 
+
 Hex.prototype.removeUnit = function() {
     this.unit = null;
 };
+
 
 Hex.prototype.getAdjacentHexes = function() {
 
@@ -121,10 +136,20 @@ Hex.prototype.getAdjacentHexes = function() {
     return adjacentHexes;
 };
 
+
 Hex.prototype.isMoveable = function() {
     return ! this.hasUnit();
 };
 
-Hex.prototype.setHighlight = function(bool) {
-    this.highlightGroup.setAll('visible', bool);
-}
+
+Hex.prototype.showMoveable = function(cost) {
+    this.moveableMarkerGroup.setAll('visible', true);
+    if(DEBUG) {
+        this.debugPathfinder.setText(cost);
+    }
+};
+
+
+Hex.prototype.hideMoveable = function() {
+    this.moveableMarkerGroup.setAll('visible', false);
+};
