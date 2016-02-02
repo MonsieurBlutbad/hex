@@ -23,7 +23,11 @@ Level.prototype = {
         this.worldBounds = {
             x: this.grid.width * (HEX_WIDTH * 0.75) + OVERLAY_WIDTH + (HEX_WIDTH * 0.25),
             y: this.grid.height * HEX_HEIGHT + (HEX_HEIGHT / 2)
-        }
+        };
+
+        this.selectionChangeEvent = new Phaser.Signal();
+        if(DEBUG)
+            this.selectionChangeEvent.add( function(hex) { console.log('selectionChangeEvent', hex )});
     },
 
     preload: function() {

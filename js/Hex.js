@@ -186,10 +186,7 @@ Hex.prototype.mousedown = function() {
     } else {
         this.select();
     }
-
-    /* TODO: do this with event */
-    this.level.overlay.updateText(this.level.selectedHex);
-    this.level.overlay.showText();
+    this.level.selectionChangeEvent.dispatch(this);
 };
 
 /**

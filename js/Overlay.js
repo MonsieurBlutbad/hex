@@ -4,6 +4,8 @@
 var Overlay = function(level) {
     var self = this;
 
+    this.level = level;
+
     this.text = {
         terrain: {
             name: '',
@@ -39,7 +41,10 @@ var Overlay = function(level) {
     graphicOverlayShadow.drawRect(-HEX_WIDTH / 16, 0, HEX_WIDTH / 16, HEIGHT);
     graphicOverlayShadow.endFill();
     this.background.addChild(graphicOverlayShadow);
+
     createText();
+
+    this.level.selectionChangeEvent.add(this.updateText, this);
 
     return this;
 
@@ -56,7 +61,7 @@ Overlay.prototype = {
     },
 
     updateText: function (hex) {
-        if(hex) {
+        if(this.level.selectedHex === hex) {
             var terrain = hex.terrain;
             this.text.terrain.name.setText(terrain? terrain.name : 'no name given');
             this.text.terrain.movementCost.setText(terrain? terrain.movementCost : 'no movement cost given');

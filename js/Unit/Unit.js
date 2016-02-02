@@ -5,6 +5,8 @@ var Unit = function (level, tileX, tileY) {
         y: tileY
     };
 
+    this.canMove = false;
+
     this.moveableHexes = new Hashtable();
 
     this.init();
@@ -22,7 +24,6 @@ var Unit = function (level, tileX, tileY) {
     this.addChild(this.highlight);
 
     this.selectEvent = new Phaser.Signal();
-    this.selectEvent.add(this.showMoveableHexes, this);
     if(DEBUG)
         this.selectEvent.add(function() { console.log('selectEvent', this)}, this);
 
@@ -37,6 +38,7 @@ var Unit = function (level, tileX, tileY) {
     this.finishMoveEvent = new Phaser.Signal();
     if(DEBUG)
         this.finishMoveEvent.add(function() { console.log('finishMoveEvent', this)}, this);
+    this.finishMoveEvent.add(this.finishMoveListener, this);
 
 };
 
@@ -135,6 +137,9 @@ Unit.prototype.showMoveableHexes = function() {
 
 };
 
+/**
+ * Selects this unit.
+ */
 Unit.prototype.select = function() {
     this.level.selectedUnit = this;
     this.highlight.visible = true;
@@ -142,6 +147,9 @@ Unit.prototype.select = function() {
     this.selectEvent.dispatch(this);
 };
 
+/**
+ * Deselects this unit.
+ */
 Unit.prototype.deselect = function() {
     this.level.selectedUnit = null;
     this.highlight.visible = false;
@@ -149,16 +157,49 @@ Unit.prototype.deselect = function() {
     this.deselectEvent.dispatch(this);
 };
 
+/**
+ * Moves unit to given hex.
+ *
+ * @param hex
+ */
 Unit.prototype.moveTo = function(hex) {
-    this.startMoveEvent.dispatch(this);
-    this.level.hex[this.tile.x][this.tile.y].removeUnit();
-    this.tile = hex.tile;
-    this.x = hex.x;
-    this.y = hex.y;
-    hex.setUnit(this);
-    this.finishMoveEvent.dispatch(this);
+    if(this.canMove) {
+        this.startMoveEvent.dispatch(this);
+        this.level.hex[this.tile.x][this.tile.y].removeUnit();
+        this.tile = hex.tile;
+        this.x = hex.x;
+        this.y = hex.y;
+        hex.setUnit(this);
+        this.finishMoveEvent.dispatch(this);
+    }
 };
 
+/**
+ *  Returns true if given hex is a valid move option.
+ *
+ * @param hex
+ */
 Unit.prototype.canMoveTo = function(hex) {
   return this.moveableHexes.containsKey(hex);
 };
+
+/**
+ * Listens for finish move event.
+ */
+Unit.prototype.finishMoveListener = function() {
+    this.canMove = false;
+    this.selectEvent.remove(this.showMoveableHexes, this);
+};
+
+/**
+ * Listens for new turn event.
+ */
+Unit.prototype.newTurnListener = function() {
+    this.canMove = true;
+    this.selectEvent.add(this.showMoveableHexes, this);
+};
+
+/**
+ * Listens for end turn event.
+ */
+Unit.prototype.endTurnListener = function() {};
