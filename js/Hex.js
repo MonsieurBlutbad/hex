@@ -28,13 +28,22 @@ var Hex = function (level, tileX, tileY) {
 
     this.inputEnabled = true;
 
-    this.events.onInputDown.add(this.level.hexClicked, this.level);
+    if(DEBUG)
+        this.events.onInputDown.add(function() { console.log('onInputDown', this)}, this);
+    this.events.onInputDown.add(this.mousedown, this);
 
-    this.events.onInputOver.add(this.level.hexHovered, this.level);
-
-    this.events.onInputOut.add(this.level.hexLeft, this.level);
+    this.events.onInputOver.add(this.mouseover, this);
+    this.events.onInputOut.add(this.mouseout, this);
 
     this.createMoveableMarker(geometry);
+
+    this.hoveredMarker = game.add.sprite(0,0,'mouseOverHex');
+    this.hoveredMarker.visible=false;
+    this.addChild(this.hoveredMarker);
+
+    this.selectedMarker = game.add.sprite(0,0,'selectedHex');
+    this.selectedMarker.visible=false;
+    this.addChild(this.selectedMarker);
 
     if(DEBUG) {
         var style = { font: "12px Courier", fill: "#fff", align: "center" };
@@ -152,4 +161,62 @@ Hex.prototype.showMoveable = function(cost) {
 
 Hex.prototype.hideMoveable = function() {
     this.moveableMarkerGroup.setAll('visible', false);
+};
+
+/**
+ * Called on mouse over event.
+ */
+Hex.prototype.mouseover = function() {
+    this.hoveredMarker.visible = true;
+};
+
+/**
+ * Called on mouse out event.
+ */
+Hex.prototype.mouseout = function() {
+    this.hoveredMarker.visible = false;
+};
+
+/**
+ * Called on mouse down event.
+ */
+Hex.prototype.mousedown = function() {
+    if(this.level.selectedHex === this) {
+        this.deselect();
+    } else {
+        this.select();
+    }
+    /* TODO: do this with event */
+    this.level.overlay.updateText(this.level.selectedHex);
+    this.level.overlay.showText();
+};
+
+/**
+ * Selects this hex.
+ */
+Hex.prototype.select = function() {
+    if(this.level.selectedHex)
+        this.level.selectedHex.selectedMarker.visible = false;
+    this.level.selectedHex = this;
+    this.selectedMarker.visible = true;
+    if(this.hasUnit()) {
+        this.getUnit().select();
+    }
+    else if(this.level.selectedUnit) {
+        var unit = this.level.selectedUnit;
+        if(unit.canMoveTo(this))
+           unit.moveTo(this);
+        else
+            unit.deselect();
+    }
+};
+
+/**
+ * Deselects this hex.
+ */
+Hex.prototype.deselect = function() {
+    if(this.level.selectedUnit)
+        this.level.selectedUnit.deselect();
+    this.level.selectedHex = null;
+    this.selectedMarker.visible = false;
 };

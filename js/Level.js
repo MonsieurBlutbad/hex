@@ -8,12 +8,10 @@ var Level = function () {
     this.unitGroup;
     this.selectedHex;
     this.selectedUnit;
-    this.hoveredHexMarker;
-    this.selectedHexMarker;
     this.selectedHex;
-    this.hoveredHex;
     this.overlay;
     this.worldBounds;
+
     this.hex = [[]];
 
 };
@@ -57,12 +55,6 @@ Level.prototype = {
         this.createUnits();
 
         this.createOverlay();
-
-        this.selectedHexMarker = game.add.sprite(0,0,'selectedHex');
-        this.selectedHexMarker.visible=false;
-
-        this.hoveredHexMarker = game.add.sprite(0,0,'mouseOverHex');
-        this.hoveredHexMarker.visible=false;
 
         game.input.mouse.capture = true;
 
@@ -118,63 +110,6 @@ Level.prototype = {
     renderFps: function() {
         game.debug.text.fontSize = 8;
         game.debug.text(game.time.fps || '--', 2, 14, '#00ff00', '14px Courier');
-    },
-
-    hexClicked: function (hex) {
-        if(this.selectedHex === hex) {
-            this.deselectHex();
-        } else {
-            this.selectHex(hex);
-        }
-
-        this.overlay.updateText(this.selectedHex);
-        this.overlay.showText();
-    },
-
-    selectHex: function(hex) {
-        this.selectedHex = hex;
-        this.selectedHexMarker.visible = true;
-        this.selectedHexMarker.x = hex.x;
-        this.selectedHexMarker.y = hex.y;
-
-        if (hex.hasUnit())
-            this.selectUnit(hex.getUnit());
-        else if (this.selectedUnit) {
-            this.selectedUnit.moveTo(hex);
-            this.deselectHex();
-        }
-    },
-
-    deselectHex: function() {
-        this.selectedHex = null;
-        this.selectedHexMarker.visible = false;
-        this.deselectUnit();
-    },
-
-    selectUnit: function(unit) {
-        if(this.selectedUnit)
-            this.deselectUnit();
-        this.selectedUnit = unit;
-        this.selectedUnit.select();
-    },
-
-    deselectUnit: function() {
-        if(this.selectedUnit) {
-            this.selectedUnit.deselect();
-            this.selectedUnit = null;
-        }
-    },
-
-    hexHovered: function (hex) {
-        this.hoveredHex = hex;
-        this.hoveredHexMarker.visible = true;
-        this.hoveredHexMarker.x = hex.x;
-        this.hoveredHexMarker.y = hex.y;
-    },
-
-    hexLeft: function (hex) {
-        this.hoveredHex = null;
-        this.hoveredHexMarker.visible = false;
     },
 
     getWorldCoordinates: function (tileX, tileY) {

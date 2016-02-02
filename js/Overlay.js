@@ -61,7 +61,7 @@ Overlay.prototype = {
             this.text.terrain.name.setText(terrain? terrain.name : 'no name given');
             this.text.terrain.movementCost.setText(terrain? terrain.movementCost : 'no movement cost given');
             var unit = hex.unit;
-            this.text.unit.name.setText(unit? unit.name: 'no unit name given');
+            this.text.unit.name.setText(unit? unit.name: '');
         } else
             this.clearText();
     },

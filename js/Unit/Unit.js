@@ -5,6 +5,8 @@ var Unit = function (level, tileX, tileY) {
         y: tileY
     };
 
+    this.moveableHexes = new Hashtable();
+
     this.init();
 
     var world = this.level.getWorldCoordinates(this.tile.x, this.tile.y);
@@ -19,11 +21,23 @@ var Unit = function (level, tileX, tileY) {
     this.highlight.visible = false;
     this.addChild(this.highlight);
 
-    this.startMoveEvent = new Phaser.Signal();
-    this.finishMoveEvent = new Phaser.Signal();
     this.selectEvent = new Phaser.Signal();
     this.selectEvent.add(this.showMoveableHexes, this);
+    if(DEBUG)
+        this.selectEvent.add(function() { console.log('selectEvent', this)}, this);
+
     this.deselectEvent = new Phaser.Signal();
+    if(DEBUG)
+        this.deselectEvent.add(function() { console.log('deselectEvent', this)}, this);
+
+    this.startMoveEvent = new Phaser.Signal();
+    if(DEBUG)
+        this.startMoveEvent.add(function() { console.log('startMoveEvent', this)}, this);
+
+    this.finishMoveEvent = new Phaser.Signal();
+    if(DEBUG)
+        this.finishMoveEvent.add(function() { console.log('finishMoveEvent', this)}, this);
+
 };
 
 Unit.prototype = Object.create(Phaser.Sprite.prototype);
@@ -75,31 +89,15 @@ Unit.prototype.updateHitpointOverlay = function() {
     this.hitpointText.setText(this.hitpoints)
 };
 
-Unit.prototype.moveTo = function(hex) {
-    // TODO checks if movement possible
-    this.level.hex[this.tile.x][this.tile.y].removeUnit();
-
-    this.tile = {
-        x: hex.tile.x,
-        y: hex.tile.y
-    };
-
-    var world = this.level.getWorldCoordinates(this.tile.x, this.tile.y);
-    this.x = world.x;
-    this.y = world.y;
-
-    this.level.hex[this.tile.x][this.tile.y].setUnit(this);
-};
-
 Unit.prototype.showMoveableHexes = function() {
     var self = this;
     var start = this.level.hex[this.tile.x][this.tile.y];
     var frontier = new Hashtable();
     frontier.put(start, 0);
     var cameFrom = new Hashtable();
-    var costSoFar = new Hashtable();
+    this.moveableHexes = new Hashtable();
     cameFrom.put(start, 0);
-    costSoFar.put(start, 0);
+    this.moveableHexes.put(start, 0);
 
     while (frontier.size() > 0) {
         var current = frontier.entries()[0][0];
@@ -107,10 +105,10 @@ Unit.prototype.showMoveableHexes = function() {
         var neighbours = current.getAdjacentHexes();
         neighbours.forEach( function(next) {
             if(next.isMoveable()) {
-                var newCost = costSoFar.get(current) + next.terrain.movementCost;
+                var newCost = self.moveableHexes.get(current) + next.terrain.movementCost;
                 if(newCost <= self.movement) {
-                    if( ! costSoFar.containsKey(next) || newCost < costSoFar.get(next)) {
-                        costSoFar.put(next, newCost);
+                    if( ! self.moveableHexes.containsKey(next) || newCost < self.moveableHexes.get(next)) {
+                        self.moveableHexes.put(next, newCost);
                         frontier.put(next, newCost);
                         cameFrom.put(next, current);
                     }
@@ -119,9 +117,9 @@ Unit.prototype.showMoveableHexes = function() {
         });
     }
 
-    costSoFar.remove(start);
+    this.moveableHexes.remove(start);
 
-    costSoFar.entries().forEach( function(entry) {
+    this.moveableHexes.entries().forEach( function(entry) {
         var hex = entry[0];
         var cost = entry[1];
         hex.showMoveable(cost);
@@ -132,20 +130,29 @@ Unit.prototype.showMoveableHexes = function() {
 };
 
 Unit.prototype.select = function() {
-    this.isSelected = true;
+    this.level.selectedUnit = this;
     this.highlight.visible = true;
 
     this.selectEvent.dispatch(this);
 };
 
 Unit.prototype.deselect = function() {
-    this.isSelected = false;
+    this.level.selectedUnit = null;
     this.highlight.visible = false;
 
     this.deselectEvent.dispatch(this);
 };
 
-Unit.prototype.moveTo = function(tileX, tileY) {
+Unit.prototype.moveTo = function(hex) {
     this.startMoveEvent.dispatch(this);
+    this.level.hex[this.tile.x][this.tile.y].removeUnit();
+    this.tile = hex.tile;
+    this.x = hex.x;
+    this.y = hex.y;
+    hex.setUnit(this);
     this.finishMoveEvent.dispatch(this);
+};
+
+Unit.prototype.canMoveTo = function(hex) {
+  return this.moveableHexes.containsKey(hex);
 };

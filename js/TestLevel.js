@@ -21,7 +21,7 @@ level.loadAssets = function () {
 };
 
 level.createTerrain = function() {
-    var terrainClasses = [Grass, Dirt, Forest]
+    var terrainClasses = [Grass, Dirt, Forest];
     for (var tileY = 0; tileY < this.grid.height; tileY ++) {
         for (var tileX = 0; tileX < this.grid.width; tileX ++) {
             var randomValue = game.rnd.integerInRange(0, 2);
