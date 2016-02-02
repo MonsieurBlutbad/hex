@@ -4,6 +4,8 @@
 var Overlay = function(level) {
     var self = this;
 
+    this.level = level;
+
     this.text = {
         terrain: {
             name: '',
@@ -18,9 +20,9 @@ var Overlay = function(level) {
         self.textGroup = game.add.group();
         var marginLeft = 20;
         var style = { font: '16px Courier', fill: '#ccc', align: 'left'};
-        self.text.terrain.name = game.add.text( marginLeft, 50, 'Terrain', style);
-        self.text.terrain.movementCost = game.add.text( marginLeft, 70, 'Movement', style);
-        self.text.unit.name = game.add.text( marginLeft, 90, 'Unit', style);
+        self.text.terrain.name = game.add.text( marginLeft, 50, '', style);
+        self.text.terrain.movementCost = game.add.text( marginLeft, 70, '', style);
+        self.text.unit.name = game.add.text( marginLeft, 90, '', style);
         self.textGroup.add(self.text.terrain.name);
         self.textGroup.add(self.text.terrain.movementCost);
         self.textGroup.add(self.text.unit.name);
@@ -39,7 +41,10 @@ var Overlay = function(level) {
     graphicOverlayShadow.drawRect(-HEX_WIDTH / 16, 0, HEX_WIDTH / 16, HEIGHT);
     graphicOverlayShadow.endFill();
     this.background.addChild(graphicOverlayShadow);
+
     createText();
+
+    this.level.selectionChangeEvent.add(this.updateText, this);
 
     return this;
 
@@ -56,13 +61,20 @@ Overlay.prototype = {
     },
 
     updateText: function (hex) {
-        if(! hex instanceof Hex )
-            console.log('Bad Argument. Expected Hex, got' + hex, this);
-        var terrain = hex.terrain;
-        this.text.terrain.name.setText(terrain? terrain.name : 'no name given');
-        this.text.terrain.movementCost.setText(terrain? terrain.movementCost : 'no movement cost given');
-        var unit = hex.unit;
-        this.text.unit.name.setText(unit? unit.name: 'no unit name given');
+        if(this.level.selectedHex === hex) {
+            var terrain = hex.terrain;
+            this.text.terrain.name.setText(terrain? terrain.name : 'no name given');
+            this.text.terrain.movementCost.setText(terrain? terrain.movementCost : 'no movement cost given');
+            var unit = hex.unit;
+            this.text.unit.name.setText(unit? unit.name: '');
+        } else
+            this.clearText();
+    },
+
+    clearText: function() {
+        this.text.terrain.name.setText('');
+        this.text.terrain.movementCost.setText('');
+        this.text.unit.name.setText('');
     }
 
 };

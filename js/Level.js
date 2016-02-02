@@ -1,18 +1,17 @@
 var Level = function () {
     this.grid = {
-        x: null,
-        y: null
+        width: null,
+        height: null
     };
     this.hexGroup;
     this.terrainGroup;
     this.unitGroup;
     this.selectedHex;
-    this.hoveredHexMarker;
-    this.selectedHexMarker;
+    this.selectedUnit;
     this.selectedHex;
-    this.hoveredHex;
     this.overlay;
     this.worldBounds;
+
     this.hex = [[]];
 
 };
@@ -22,15 +21,18 @@ Level.prototype = {
 
     init: function () {
         this.worldBounds = {
-            x: this.grid.x * (HEX_WIDTH * 0.75) + OVERLAY_WIDTH + (HEX_WIDTH * 0.25),
-            y: this.grid.y * HEX_HEIGHT + (HEX_HEIGHT / 2)
-        }
+            x: this.grid.width * (HEX_WIDTH * 0.75) + OVERLAY_WIDTH + (HEX_WIDTH * 0.25),
+            y: this.grid.height * HEX_HEIGHT + (HEX_HEIGHT / 2)
+        };
+
+        this.selectionChangeEvent = new Phaser.Signal();
+        if(DEBUG)
+            this.selectionChangeEvent.add( function(hex) { console.log('selectionChangeEvent', hex )});
     },
 
     preload: function() {
         game.time.advancedTiming = true;
-        game.load.image('hex', 'sprites/hex.png');
-        game.load.image('mouseOverHex', 'sprites/mouseOverHex.png');
+        game.load.image('mouseOverHex', 'sprites/hoveredHexMarker.png');
         game.load.image('selectedHex', 'sprites/selectedHex.png');
 
         this.loadAssets();
@@ -58,12 +60,6 @@ Level.prototype = {
 
         this.createOverlay();
 
-        this.hoveredHexMarker = game.add.sprite(0,0,'mouseOverHex');
-        this.hoveredHexMarker.visible=false;
-
-        this.selectedHexMarker = game.add.sprite(0,0,'selectedHex');
-        this.selectedHexMarker.visible=false;
-
         game.input.mouse.capture = true;
 
         cursors = game.input.keyboard.createCursorKeys();
@@ -73,10 +69,10 @@ Level.prototype = {
     },
 
     createGrid: function() {
-        for (var tileX = 0; tileX < this.grid.x; tileX++) {
+        for (var tileX = 0; tileX < this.grid.width; tileX++) {
             this.hex[tileX] = [];
-            for (var tileY = 0; tileY < this.grid.y; tileY ++) {
-                this.hex[tileX][tileY] = new Hex(this, tileX, tileY); //this.hexFactory.createHex(tileX, tileY);
+            for (var tileY = 0; tileY < this.grid.height; tileY ++) {
+                this.hex[tileX][tileY] = new Hex(this, tileX, tileY);
                 this.hexGroup.add(this.hex[tileX][tileY]);
             }
         }
@@ -120,30 +116,8 @@ Level.prototype = {
         game.debug.text(game.time.fps || '--', 2, 14, '#00ff00', '14px Courier');
     },
 
-    hexClicked: function (hex) {
-        this.selectedHex = hex;
-        this.selectedHexMarker.visible = true;
-        this.selectedHexMarker.x = hex.x;
-        this.selectedHexMarker.y = hex.y;
-    },
-
-    hexHovered: function (hex) {
-        this.hoveredHex = hex;
-        this.hoveredHexMarker.visible = true;
-        this.hoveredHexMarker.x = hex.x;
-        this.hoveredHexMarker.y = hex.y;
-        this.overlay.updateText(hex);
-        this.overlay.showText();
-    },
-
-    hexLeft: function (hex) {
-        this.hoveredHex = null;
-        this.hoveredHexMarker.visible = false;
-        this.overlay.hideText();
-    },
-
     getWorldCoordinates: function (tileX, tileY) {
-        if (tileX < 0 || tileY < 0 || tileX >= this.grid.x || tileY >= this.grid.y) {
+        if (tileX < 0 || tileY < 0 || tileX >= this.grid.width || tileY >= this.grid.height) {
             return null;
         }
         return {
