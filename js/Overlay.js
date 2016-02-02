@@ -6,7 +6,7 @@ var Overlay = function(level) {
 
     this.level = level;
 
-    this.text = {
+    this.selectionText = {
         terrain: {
             name: '',
             movementCost: ''
@@ -42,9 +42,11 @@ var Overlay = function(level) {
     graphicOverlayShadow.endFill();
     this.background.addChild(graphicOverlayShadow);
 
-    createText();
+    this.createSelectionText();
+    this.createTurnText();
 
-    this.level.selectionChangeEvent.add(this.updateText, this);
+    this.level.selectionChangeEvent.add(this.updateSelectionText, this);
+    this.level.newTurnEvent.add(this.updateTurnText, this);
 
     return this;
 
@@ -52,29 +54,47 @@ var Overlay = function(level) {
 
 Overlay.prototype = {
 
-    showText: function () {
-        this.textGroup.visible = true;
+    createTurnText: function() {
+        this.turnTextGroup = game.add.group();
+        var marginLeft = 20;
+        var style = { font: '16px Courier', fill: '#ccc', align: 'left'};
+        this.turnText = game.add.text( marginLeft, 20, 'Turn: ' + this.level.turn, style);
+        this.turnTextGroup.add(this.turnText);
+        this.background.addChild(this.turnTextGroup);
     },
 
-    hideText: function () {
-        this.textGroup.visible = false;
+    updateTurnText: function () {
+        this.turnText.setText('Turn: ' + this.level.turn);
     },
 
-    updateText: function (hex) {
+    createSelectionText: function () {
+        this.selectionTextGroup = game.add.group();
+        var marginLeft = 20;
+        var style = { font: '16px Courier', fill: '#ccc', align: 'left'};
+        this.selectionText.terrain.name = game.add.text( marginLeft, 50, '', style);
+        this.selectionText.terrain.movementCost = game.add.text( marginLeft, 70, '', style);
+        this.selectionText.unit.name = game.add.text( marginLeft, 90, '', style);
+        this.selectionTextGroup.add(this.selectionText.terrain.name);
+        this.selectionTextGroup.add(this.selectionText.terrain.movementCost);
+        this.selectionTextGroup.add(this.selectionText.unit.name);
+        this.background.addChild(this.selectionTextGroup);
+    },
+
+    updateSelectionText: function (hex) {
         if(this.level.selectedHex === hex) {
             var terrain = hex.terrain;
-            this.text.terrain.name.setText(terrain? terrain.name : 'no name given');
-            this.text.terrain.movementCost.setText(terrain? terrain.movementCost : 'no movement cost given');
+            this.selectionText.terrain.name.setText(terrain? terrain.name : 'no name given');
+            this.selectionText.terrain.movementCost.setText(terrain? terrain.movementCost : 'no movement cost given');
             var unit = hex.unit;
-            this.text.unit.name.setText(unit? unit.name: '');
+            this.selectionText.unit.name.setText(unit? unit.name: '');
         } else
-            this.clearText();
+            this.clearSelectionText();
     },
 
-    clearText: function() {
-        this.text.terrain.name.setText('');
-        this.text.terrain.movementCost.setText('');
-        this.text.unit.name.setText('');
+    clearSelectionText: function() {
+        this.selectionText.terrain.name.setText('');
+        this.selectionText.terrain.movementCost.setText('');
+        this.selectionText.unit.name.setText('');
     }
 
 };

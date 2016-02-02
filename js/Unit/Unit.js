@@ -40,6 +40,9 @@ var Unit = function (level, tileX, tileY) {
         this.finishMoveEvent.add(function() { console.log('finishMoveEvent', this)}, this);
     this.finishMoveEvent.add(this.finishMoveListener, this);
 
+    this.level.newTurnEvent.add(this.newTurnListener, this);
+    this.level.endTurnEvent.add(this.endTurnListener, this);
+
 };
 
 Unit.prototype = Object.create(Phaser.Sprite.prototype);

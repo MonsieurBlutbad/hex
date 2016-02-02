@@ -13,6 +13,7 @@ var Level = function () {
     this.worldBounds;
 
     this.hex = [[]];
+    this.turn = 0;
 
 };
 
@@ -28,6 +29,9 @@ Level.prototype = {
         this.selectionChangeEvent = new Phaser.Signal();
         if(DEBUG)
             this.selectionChangeEvent.add( function(hex) { console.log('selectionChangeEvent', hex )});
+
+        this.newTurnEvent = new Phaser.Signal();
+        this.endTurnEvent = new Phaser.Signal();
     },
 
     preload: function() {
@@ -65,6 +69,8 @@ Level.prototype = {
         cursors = game.input.keyboard.createCursorKeys();
 
         game.world.setBounds(0, 0, this.worldBounds.x, this.worldBounds.y);
+
+        this.newTurnEvent.dispatch();
 
     },
 
