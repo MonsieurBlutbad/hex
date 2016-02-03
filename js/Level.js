@@ -31,7 +31,17 @@ Level.prototype = {
             this.selectionChangeEvent.add( function(hex) { console.log('selectionChangeEvent', hex )});
 
         this.newTurnEvent = new Phaser.Signal();
+        this.newTurnEvent.add(
+            function(level) {
+                level.turn ++;
+            }
+        );
+        if(DEBUG)
+            this.newTurnEvent.add( function(level) { console.log('newTurnEvent', level )});
+
         this.endTurnEvent = new Phaser.Signal();
+        if(DEBUG)
+            this.endTurnEvent.add( function(level) { console.log('endTurnEvent', level )});
     },
 
     preload: function() {
@@ -70,8 +80,13 @@ Level.prototype = {
 
         game.world.setBounds(0, 0, this.worldBounds.x, this.worldBounds.y);
 
-        this.newTurnEvent.dispatch();
+        this.newTurnEvent.dispatch(this);
 
+        var key1 = game.input.keyboard.addKey(Phaser.Keyboard.E);
+        key1.onDown.add(function() { this.endTurnEvent.dispatch(this); }, this);
+
+        var key2 = game.input.keyboard.addKey(Phaser.Keyboard.N);
+        key2.onDown.add(function() { this.newTurnEvent.dispatch(this); }, this);
     },
 
     createGrid: function() {

@@ -38,7 +38,3 @@ level.createUnits = function() {
     this.hex[3][3].setUnit(panther);
     this.panther = panther;
 };
-
-level.update = function () {
-    this.updateCamera();
-};
