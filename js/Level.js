@@ -13,10 +13,8 @@ var Level = function () {
     this.worldBounds;
 
     this.hex = [[]];
-    this.round = 0;
 
     this.sides = [];
-    this.currentSide;
 
     this.turnManager = new TurnManager(this);
 };
@@ -40,7 +38,7 @@ Level.prototype = {
 
         this.initSides();
 
-        this.currentSide = this.sides[0];
+        this.turnManager.init();
     },
 
     initSides: function () {},

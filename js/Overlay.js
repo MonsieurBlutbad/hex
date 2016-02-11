@@ -58,16 +58,16 @@ Overlay.prototype = {
         this.roundTextGroup = game.add.group();
         var marginLeft = 20;
         var style = { font: '16px Courier', fill: '#ccc', align: 'left'};
-        this.roundText = game.add.text( marginLeft, 20, 'Round: ' + this.level.round, style);
-        this.turnText = game.add.text( marginLeft, 36, 'Turn: ' + this.level.currentSide.name, style);
+        this.roundText = game.add.text( marginLeft, 20, 'Round: ' + this.level.turnManager.round, style);
+        this.turnText = game.add.text( marginLeft, 36, 'Turn: ' + this.level.turnManager.currentSide.name, style);
         this.roundTextGroup.add(this.roundText);
         this.roundTextGroup.add(this.turnText);
         this.background.addChild(this.roundTextGroup);
     },
 
     updateRoundText: function () {
-        this.roundText.setText('Round: ' + this.level.round);
-        this.turnText.setText('Turn: ' + this.level.currentSide.name);
+        this.roundText.setText('Round: ' + this.level.turnManager.round);
+        this.turnText.setText('Turn: ' + this.level.turnManager.currentSide.name);
     },
 
     createSelectionText: function () {

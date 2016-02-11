@@ -3,65 +3,77 @@
  */
 var TurnManager = function(level) {
     this.level = level;
+    this.round = 0;
+    this.currentSide;
+
+    this.initEvent = new Phaser.Signal();
+    this.initEvent.add( this.init, this, 9);
 
     this.nextRoundEvent = new Phaser.Signal();
-    this.nextRoundEvent.add( this.nextRoundListener, this, 9);
+    this.nextRoundEvent.add( this.nextRound, this, 9);
 
     this.beginRoundEvent = new Phaser.Signal();
-    this.beginRoundEvent.add( this.beginRoundListener, this, 9);
+    this.beginRoundEvent.add( this.beginRound, this, 9);
 
     this.endRoundEvent = new Phaser.Signal();
-    this.endRoundEvent.add( this.endRoundListener, this, 9);
+    this.endRoundEvent.add( this.endRound, this, 9);
 
     this.nextTurnEvent = new Phaser.Signal();
-    this.nextTurnEvent.add( this.nextTurnListener, this, 9);
+    this.nextTurnEvent.add( this.nextTurn, this, 9);
 
     this.beginTurnEvent = new Phaser.Signal();
-    this.beginTurnEvent.add( this.beginTurnListener, this, 9 );
+    this.beginTurnEvent.add( this.beginTurn, this, 9 );
 
     this.endTurnEvent = new Phaser.Signal();
-    this.endTurnEvent.add( this.endTurnListener, this, 9);
+    this.endTurnEvent.add( this.endTurn, this, 9);
+
 };
 
 TurnManager.prototype = {
 
-    nextRoundListener: function() {
+    init: function () {
+        this.round = 0;
+        this.currentSide = this.level.sides[0];
+    },
+
+    nextRound: function() {
         if(DEBUG)
-            console.log('nextRoundListener', this);
+            console.log('nextRound', this);
         this.endRoundEvent.dispatch();
         this.beginRoundEvent.dispatch();
     },
 
-    endRoundListener: function() {
+    endRound: function() {
         if(DEBUG)
-            console.log('endRoundListener', this);
+            console.log('endRound', this);
     },
 
-    beginRoundListener: function() {
+    beginRound: function() {
         if(DEBUG)
-            console.log('beginRoundListener', this);
-        this.level.round ++;
+            console.log('beginRound', this);
+        this.round ++;
     },
 
-    nextTurnListener: function() {
+    nextTurn: function() {
         if(DEBUG)
-            console.log('nextTurnListener', this);
+            console.log('nextTurn', this);
         this.endTurnEvent.dispatch();
         this.beginTurnEvent.dispatch();
     },
 
-    endTurnListener: function(level) {
+    endTurn: function(level) {
         if(DEBUG)
-            console.log('endTurnListener', this);
-        this.level.selectedHex.deselect();
+            console.log('endTurn', this);
+        if(this.level.selectedHex)
+            this.level.selectedHex.deselect();
     },
 
-    beginTurnListener: function() {
+    beginTurn: function() {
         if(DEBUG)
-            console.log('beginTurnListener', this);
+            console.log('beginTurn', this);
 
-        var index = this.level.sides.indexOf(this.level.currentSide) + 1;
-        this.level.currentSide = this.level.sides[index % this.level.sides.length];
+        var index = this.level.sides.indexOf(this.currentSide) + 1;
+        this.currentSide = this.level.sides[index % this.level.sides.length];
         if(index >= this.level.sides.length) {
             this.nextRoundEvent.dispatch();
         }

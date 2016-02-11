@@ -13,12 +13,12 @@ var Side = function(level, name, type) {
     var self = this;
 
     level.turnManager.beginTurnEvent.add( function() {
-        if(self.level.currentSide === self)
+        if(self.level.turnManager.currentSide === self)
             self.beginTurnEvent.dispatch(self);
     });
 
     level.turnManager.endTurnEvent.add( function() {
-        if(self.level.currentSide === self)
+        if(self.level.turnManager.currentSide === self)
             self.endTurnEvent.dispatch(self);
     });
 
