@@ -13,8 +13,10 @@ var Level = function () {
     this.worldBounds;
 
     this.hex = [[]];
+    this.round = 0;
     this.turn = 0;
 
+    this.sides = [];
 };
 
 
@@ -42,7 +44,11 @@ Level.prototype = {
         this.endTurnEvent = new Phaser.Signal();
         if(DEBUG)
             this.endTurnEvent.add( function(level) { console.log('endTurnEvent', level )});
+
+        this.initSides();
     },
+
+    initSides: function () {},
 
     preload: function() {
         game.time.advancedTiming = true;
@@ -146,5 +152,14 @@ Level.prototype = {
             y: HEX_HEIGHT * tileY + ((tileX % 2) * (HEX_HEIGHT / 2))
         };
     },
+
+    createUnit: function(unitClass, side, tileX, tileY) {
+        if(!unitClass || !side || !tileX || !tileY)
+            console.log("Warning, illegal arguments", this, arguments);
+
+        var unit = new unitClass(this, side, tileX, tileY);
+        this.unitGroup.add(unit);
+        this.hex[tileX][tileY].setUnit(unit);
+    }
 
 };

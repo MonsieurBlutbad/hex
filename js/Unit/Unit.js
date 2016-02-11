@@ -1,5 +1,10 @@
-var Unit = function (level, tileX, tileY) {
+var Unit = function (level, side, tileX, tileY) {
+
+    if(!level || !side || !tileX || !tileY)
+        console.log('Warning: illegal arguments', this, arguments);
+
     this.level = level;
+    this.side = side;
     this.tile = {
         x: tileX,
         y: tileY
