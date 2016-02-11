@@ -45,8 +45,8 @@ var Unit = function (level, side, tileX, tileY) {
         this.finishMoveEvent.add(function() { console.log('finishMoveEvent', this)}, this);
     this.finishMoveEvent.add(this.finishMoveListener, this);
 
-    this.level.newTurnEvent.add(this.newTurnListener, this);
-    this.level.endTurnEvent.add(this.endTurnListener, this);
+    this.side.beginTurnEvent.add(this.beginTurnListener, this);
+    this.side.endTurnEvent.add(this.endTurnListener, this);
 
 };
 
@@ -202,7 +202,7 @@ Unit.prototype.finishMoveListener = function() {
 /**
  * Listens for new turn event.
  */
-Unit.prototype.newTurnListener = function() {
+Unit.prototype.beginTurnListener = function() {
     this.canMove = true;
     this.selectEvent.add(this.showMoveableHexes, this);
 };
@@ -210,4 +210,7 @@ Unit.prototype.newTurnListener = function() {
 /**
  * Listens for end turn event.
  */
-Unit.prototype.endTurnListener = function() {};
+Unit.prototype.endTurnListener = function() {
+    this.canMove = false;
+    this.selectEvent.remove(this.showMoveableHexes, this);
+};

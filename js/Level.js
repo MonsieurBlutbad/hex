@@ -14,9 +14,11 @@ var Level = function () {
 
     this.hex = [[]];
     this.round = 0;
-    this.turn = 0;
 
     this.sides = [];
+    this.currentSide;
+
+    this.turnManager = new TurnManager(this);
 };
 
 
@@ -29,23 +31,16 @@ Level.prototype = {
         };
 
         this.selectionChangeEvent = new Phaser.Signal();
-        if(DEBUG)
-            this.selectionChangeEvent.add( function(hex) { console.log('selectionChangeEvent', hex )});
-
-        this.newTurnEvent = new Phaser.Signal();
-        this.newTurnEvent.add(
-            function(level) {
-                level.turn ++;
+        this.selectionChangeEvent.add(
+            function(hex) {
+                if(DEBUG)
+                    console.log('selectionChangeEvent', hex )
             }
         );
-        if(DEBUG)
-            this.newTurnEvent.add( function(level) { console.log('newTurnEvent', level )});
-
-        this.endTurnEvent = new Phaser.Signal();
-        if(DEBUG)
-            this.endTurnEvent.add( function(level) { console.log('endTurnEvent', level )});
 
         this.initSides();
+
+        this.currentSide = this.sides[0];
     },
 
     initSides: function () {},
@@ -86,13 +81,10 @@ Level.prototype = {
 
         game.world.setBounds(0, 0, this.worldBounds.x, this.worldBounds.y);
 
-        this.newTurnEvent.dispatch(this);
-
-        var key1 = game.input.keyboard.addKey(Phaser.Keyboard.E);
-        key1.onDown.add(function() { this.endTurnEvent.dispatch(this); }, this);
-
-        var key2 = game.input.keyboard.addKey(Phaser.Keyboard.N);
-        key2.onDown.add(function() { this.newTurnEvent.dispatch(this); }, this);
+        var nextTurnKey = game.input.keyboard.addKey(Phaser.Keyboard.N);
+        nextTurnKey.onDown.add(function() {
+            this.turnManager.endTurnEvent.dispatch(this);
+        }, this);
     },
 
     createGrid: function() {
