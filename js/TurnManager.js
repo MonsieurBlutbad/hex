@@ -53,6 +53,7 @@ TurnManager.prototype = {
     endTurnListener: function(level) {
         if(DEBUG)
             console.log('endTurnListener', this);
+        this.level.selectedHex.deselect();
     },
 
     beginTurnListener: function() {

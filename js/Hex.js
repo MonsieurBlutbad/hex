@@ -186,7 +186,6 @@ Hex.prototype.mousedown = function() {
     } else {
         this.select();
     }
-    this.level.selectionChangeEvent.dispatch(this);
 };
 
 /**
@@ -209,6 +208,7 @@ Hex.prototype.select = function() {
         else
             unit.deselect();
     }
+    this.level.selectionChangeEvent.dispatch(this);
 };
 
 /**
@@ -219,4 +219,5 @@ Hex.prototype.deselect = function() {
         this.level.selectedUnit.deselect();
     this.level.selectedHex = null;
     this.selectedMarker.visible = false;
+    this.level.selectionChangeEvent.dispatch(this);
 };
