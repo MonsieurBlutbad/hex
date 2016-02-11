@@ -198,6 +198,8 @@ Hex.prototype.select = function() {
     this.level.selectedHex = this;
     this.selectedMarker.visible = true;
     if(this.hasUnit()) {
+        if(this.level.selectedUnit)
+            this.level.selectedUnit.deselect();
         this.getUnit().select();
     }
     else if(this.level.selectedUnit) {
