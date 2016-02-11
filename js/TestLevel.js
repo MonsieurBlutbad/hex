@@ -12,6 +12,15 @@ States.Test.prototype = new Level();
 
 var level = States.Test.prototype;
 
+level.initSides = function() {
+  this.sides.push(
+      new Side(this, 'Seite 1', 'HUMAN')
+  );
+  this.sides.push(
+      new Side(this, 'Seite 2', 'HUMAN')
+  );
+};
+
 
 level.loadAssets = function () {
     game.load.image('grass', 'sprites/grass.png');
@@ -33,8 +42,6 @@ level.createTerrain = function() {
 };
 
 level.createUnits = function() {
-    var panther = new Panther(this, 3, 3);
-    this.unitGroup.add(panther);
-    this.hex[3][3].setUnit(panther);
-    this.panther = panther;
+    this.createUnit(Panther, this.sides[0], 3, 3);
+    this.createUnit(Panther, this.sides[1], 7, 7);
 };

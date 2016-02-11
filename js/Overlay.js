@@ -43,10 +43,10 @@ var Overlay = function(level) {
     this.background.addChild(graphicOverlayShadow);
 
     this.createSelectionText();
-    this.createTurnText();
+    this.createRoundText();
 
     this.level.selectionChangeEvent.add(this.updateSelectionText, this);
-    this.level.newTurnEvent.add(this.updateTurnText, this);
+    this.level.turnManager.beginTurnEvent.add(this.updateRoundText, this);
 
     return this;
 
@@ -54,17 +54,20 @@ var Overlay = function(level) {
 
 Overlay.prototype = {
 
-    createTurnText: function() {
-        this.turnTextGroup = game.add.group();
+    createRoundText: function() {
+        this.roundTextGroup = game.add.group();
         var marginLeft = 20;
         var style = { font: '16px Courier', fill: '#ccc', align: 'left'};
-        this.turnText = game.add.text( marginLeft, 20, 'Turn: ' + this.level.turn, style);
-        this.turnTextGroup.add(this.turnText);
-        this.background.addChild(this.turnTextGroup);
+        this.roundText = game.add.text( marginLeft, 20, 'Round: ' + this.level.round, style);
+        this.turnText = game.add.text( marginLeft, 36, 'Turn: ' + this.level.currentSide.name, style);
+        this.roundTextGroup.add(this.roundText);
+        this.roundTextGroup.add(this.turnText);
+        this.background.addChild(this.roundTextGroup);
     },
 
-    updateTurnText: function () {
-        this.turnText.setText('Turn: ' + this.level.turn);
+    updateRoundText: function () {
+        this.roundText.setText('Round: ' + this.level.round);
+        this.turnText.setText('Turn: ' + this.level.currentSide.name);
     },
 
     createSelectionText: function () {

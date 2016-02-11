@@ -186,7 +186,6 @@ Hex.prototype.mousedown = function() {
     } else {
         this.select();
     }
-    this.level.selectionChangeEvent.dispatch(this);
 };
 
 /**
@@ -198,6 +197,8 @@ Hex.prototype.select = function() {
     this.level.selectedHex = this;
     this.selectedMarker.visible = true;
     if(this.hasUnit()) {
+        if(this.level.selectedUnit)
+            this.level.selectedUnit.deselect();
         this.getUnit().select();
     }
     else if(this.level.selectedUnit) {
@@ -207,6 +208,7 @@ Hex.prototype.select = function() {
         else
             unit.deselect();
     }
+    this.level.selectionChangeEvent.dispatch(this);
 };
 
 /**
@@ -217,4 +219,5 @@ Hex.prototype.deselect = function() {
         this.level.selectedUnit.deselect();
     this.level.selectedHex = null;
     this.selectedMarker.visible = false;
+    this.level.selectionChangeEvent.dispatch(this);
 };
