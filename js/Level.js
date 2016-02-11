@@ -83,7 +83,7 @@ Level.prototype = {
 
         var nextTurnKey = game.input.keyboard.addKey(Phaser.Keyboard.N);
         nextTurnKey.onDown.add(function() {
-            this.turnManager.endTurnEvent.dispatch(this);
+            this.turnManager.nextTurnEvent.dispatch(this);
         }, this);
     },
 

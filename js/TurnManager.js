@@ -4,49 +4,66 @@
 var TurnManager = function(level) {
     this.level = level;
 
+    this.nextRoundEvent = new Phaser.Signal();
+    this.nextRoundEvent.add( this.nextRoundListener, this, 9);
+
     this.beginRoundEvent = new Phaser.Signal();
-    this.beginRoundEvent.add( this.beginRoundListener, this);
+    this.beginRoundEvent.add( this.beginRoundListener, this, 9);
 
     this.endRoundEvent = new Phaser.Signal();
-    this.endRoundEvent.add( this.endRoundListener, this);
+    this.endRoundEvent.add( this.endRoundListener, this, 9);
+
+    this.nextTurnEvent = new Phaser.Signal();
+    this.nextTurnEvent.add( this.nextTurnListener, this, 9);
 
     this.beginTurnEvent = new Phaser.Signal();
-    this.beginTurnEvent.add( this.beginTurnListener, this );
+    this.beginTurnEvent.add( this.beginTurnListener, this, 9 );
 
     this.endTurnEvent = new Phaser.Signal();
-    this.endTurnEvent.add( this.endTurnListener, this);
+    this.endTurnEvent.add( this.endTurnListener, this, 9);
 };
 
 TurnManager.prototype = {
 
-    beginRoundListener: function(level) {
+    nextRoundListener: function() {
         if(DEBUG)
-            console.log('beginRoundListener', level);
-        level.round ++;
+            console.log('nextRoundListener', this);
+        this.endRoundEvent.dispatch();
+        this.beginRoundEvent.dispatch();
     },
 
-    endRoundListener: function(level) {
+    endRoundListener: function() {
         if(DEBUG)
-            console.log('endRoundListener', level);
-        level.turnManager.beginRoundEvent.dispatch(level);
+            console.log('endRoundListener', this);
     },
 
-    beginTurnListener: function(level) {
+    beginRoundListener: function() {
         if(DEBUG)
-            console.log('beginTurnEvent', level);
+            console.log('beginRoundListener', this);
+        this.level.round ++;
+    },
 
-        var index = level.sides.indexOf(level.currentSide) + 1;
-        level.currentSide = level.sides[index % level.sides.length];
-        if(index >= level.sides.length) {
-            level.turnManager.endRoundEvent.dispatch(level);
-        }
-
+    nextTurnListener: function() {
+        if(DEBUG)
+            console.log('nextTurnListener', this);
+        this.endTurnEvent.dispatch();
+        this.beginTurnEvent.dispatch();
     },
 
     endTurnListener: function(level) {
         if(DEBUG)
-            console.log('endTurnEvent', level);
-        this.beginTurnEvent.dispatch(level);
-    }
+            console.log('endTurnListener', this);
+    },
+
+    beginTurnListener: function() {
+        if(DEBUG)
+            console.log('beginTurnListener', this);
+
+        var index = this.level.sides.indexOf(this.level.currentSide) + 1;
+        this.level.currentSide = this.level.sides[index % this.level.sides.length];
+        if(index >= this.level.sides.length) {
+            this.nextRoundEvent.dispatch();
+        }
+    },
 
 };
