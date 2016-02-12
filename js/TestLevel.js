@@ -21,7 +21,6 @@ level.initSides = function() {
   );
 };
 
-
 level.loadAssets = function () {
     game.load.image('grass', 'sprites/grass.png');
     game.load.image('forest', 'sprites/forest.png');
@@ -43,5 +42,9 @@ level.createTerrain = function() {
 
 level.createUnits = function() {
     this.createUnit(Panther, this.sides[0], 3, 3);
+    this.createUnit(Panther, this.sides[0], 2, 3);
+    this.createUnit(Panther, this.sides[0], 1, 3);
     this.createUnit(Panther, this.sides[1], 7, 7);
+    this.createUnit(Panther, this.sides[1], 9, 7);
+    this.createUnit(Panther, this.sides[1], 7, 9);
 };

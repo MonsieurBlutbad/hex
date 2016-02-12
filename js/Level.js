@@ -1,27 +1,37 @@
 var Level = function () {
+
     this.grid = {
         width: null,
         height: null
     };
+
     this.hexGroup;
+
     this.terrainGroup;
+
     this.unitGroup;
+
     this.selectedHex;
+
     this.selectedUnit;
-    this.selectedHex;
+
     this.overlay;
+
     this.worldBounds;
+
+    this.turnManager;
 
     this.hex = [[]];
 
     this.sides = [];
-
-    this.turnManager = new TurnManager(this);
 };
 
 
 Level.prototype = {
 
+    /**
+     * Basic Initialisation of the Level
+     */
     init: function () {
         this.worldBounds = {
             x: this.grid.width * (HEX_WIDTH * 0.75) + OVERLAY_WIDTH + (HEX_WIDTH * 0.25),
@@ -36,13 +46,21 @@ Level.prototype = {
             }
         );
 
+        this.turnManager = new TurnManager(this);
+
         this.initSides();
 
         this.turnManager.init();
     },
 
+    /**
+     * Initialise the Sides that are part of this Level
+     */
     initSides: function () {},
 
+    /**
+     * Preload general assets
+     */
     preload: function() {
         game.time.advancedTiming = true;
         game.load.image('mouseOverHex', 'sprites/hoveredHexMarker.png');
@@ -51,8 +69,14 @@ Level.prototype = {
         this.loadAssets();
     },
 
+    /**
+     * Preload level specific assets
+     */
     loadAssets: function () {},
 
+    /**
+     * Create Groups, Units and a bunch of other stuff
+     */
     create: function() {
 
         this.terrainGroup = game.add.group();
@@ -85,6 +109,9 @@ Level.prototype = {
         }, this);
     },
 
+    /**
+     * Creates the world grid Hex array
+     */
     createGrid: function() {
         for (var tileX = 0; tileX < this.grid.width; tileX++) {
             this.hex[tileX] = [];
@@ -95,18 +122,50 @@ Level.prototype = {
         }
     },
 
+    /**
+     * Creates the Terrain of the Level
+     */
     createTerrain: function() {},
 
+    /**
+     * Creates the Units of the Level
+     */
     createUnits: function() {},
 
+    /**
+     * Creates the given unit for the given side at the given tile
+     *
+     * @param unitClass
+     * @param side
+     * @param tileX
+     * @param tileY
+     */
+    createUnit: function(unitClass, side, tileX, tileY) {
+        if(!unitClass || !side || !tileX || !tileY)
+            console.log("Warning, illegal arguments", this, arguments);
+
+        var unit = new unitClass(this, side, tileX, tileY);
+        this.unitGroup.add(unit);
+        this.hex[tileX][tileY].setUnit(unit);
+    },
+
+    /**
+     * Creates the UI Overlay
+     */
     createOverlay: function () {
         this.overlay = new Overlay(this);
     },
 
+    /**
+     * Main Update Loop
+     */
     update: function () {
         this.updateCamera();
     },
 
+    /**
+     * Updates the camera position
+     */
     updateCamera: function () {
         // Horizontal Movement
         if(cursors.left.isDown || game.input.keyboard.isDown(Phaser.Keyboard.A)) {
@@ -122,17 +181,30 @@ Level.prototype = {
         }
     },
 
+    /**
+     * Render Function (gets called after update)
+     */
     render: function() {
         if(DEBUG) {
             this.renderFps();
         }
     },
 
+    /**
+     * Renders the Frames per Second
+     */
     renderFps: function() {
         game.debug.text.fontSize = 8;
         game.debug.text(game.time.fps || '--', 2, 14, '#00ff00', '14px Courier');
     },
 
+    /**
+     * Calculates World Coordinates from Tile Coordinates
+     *
+     * @param tileX
+     * @param tileY
+     * @returns {*}
+     */
     getWorldCoordinates: function (tileX, tileY) {
         if (tileX < 0 || tileY < 0 || tileX >= this.grid.width || tileY >= this.grid.height) {
             return null;
@@ -143,13 +215,5 @@ Level.prototype = {
         };
     },
 
-    createUnit: function(unitClass, side, tileX, tileY) {
-        if(!unitClass || !side || !tileX || !tileY)
-            console.log("Warning, illegal arguments", this, arguments);
-
-        var unit = new unitClass(this, side, tileX, tileY);
-        this.unitGroup.add(unit);
-        this.hex[tileX][tileY].setUnit(unit);
-    }
 
 };
