@@ -158,7 +158,6 @@ Hex.prototype.showMoveable = function(cost) {
     }
 };
 
-
 Hex.prototype.hideMoveable = function() {
     this.moveableMarkerGroup.setAll('visible', false);
 };
@@ -181,36 +180,16 @@ Hex.prototype.mouseout = function() {
  * Called on mouse down event.
  */
 Hex.prototype.mousedown = function() {
-    if(this.level.selection.hex === this) {
-        this.deselect();
-    } else {
-        this.select();
-    }
+    this.level.selection.select(this);
 };
 
 /**
  * Selects this hex.
  */
 Hex.prototype.select = function() {
-    if(this.level.selection.hex)
-        this.level.selection.hex.selectedMarker.visible = false;
-    if(this.hasUnit()) {
-        if(this.level.selection.hex && this.level.selection.hex.unit)
-            this.level.selection.hex.unit.deselect();
-        this.getUnit().select();
-    }
-    else if(this.level.selection.hex && this.level.selection.hex.unit) {
-        var unit = this.level.selection.hex.unit;
-        if(unit.canMoveTo(this))
-           unit.moveTo(this);
-        else
-            unit.deselect();
-    }
-
-    this.level.selection.hex = this;
     this.selectedMarker.visible = true;
-
-    this.level.selection.changeEvent.dispatch(this);
+    if(this.hasUnit())
+        this.unit.select();
 };
 
 /**
@@ -218,4 +197,6 @@ Hex.prototype.select = function() {
  */
 Hex.prototype.deselect = function() {
     this.selectedMarker.visible = false;
+    if(this.hasUnit())
+        this.unit.deselect();
 };

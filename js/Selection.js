@@ -20,8 +20,47 @@ Selection.prototype = {
         this.deselect();
     },
 
+    /**
+     * Returns the currently selected unit.
+     *
+     * @returns {*}
+     */
+    getUnit: function() {
+        if(this.hex)
+            return this.hex.getUnit();
+        return undefined;
+    },
+
+    /**
+     * Selects the given hex.
+     *
+     * @param hex
+     * @returns {*}
+     */
     select: function(hex) {
 
+        if(this.hex === hex)
+            return this.deselect();
+
+        var oldHex = this.hex;
+
+        // Unit Movement
+        if(this.getUnit()) {
+            var unit = this.getUnit();
+            if(unit.canMoveTo(hex))
+                unit.moveTo(hex);
+            else
+                unit.deselect();
+        }
+
+        if(oldHex)
+            oldHex.deselect();
+
+        this.hex = hex;
+
+        this.hex.select();
+
+        this.changeEvent.dispatch(this);
     },
 
     /**
