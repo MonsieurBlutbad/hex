@@ -11,6 +11,8 @@ var Level = function () {
 
     this.unitGroup;
 
+    this.markerGroup;
+
     this.overlay;
 
     this.worldBounds;
@@ -18,6 +20,8 @@ var Level = function () {
     this.turnManager;
 
     this.selection;
+
+    this.mouseOver;
 
     this.hex = [[]];
 
@@ -35,14 +39,6 @@ Level.prototype = {
             x: this.grid.width * (HEX_WIDTH * 0.75) + OVERLAY_WIDTH + (HEX_WIDTH * 0.25),
             y: this.grid.height * HEX_HEIGHT + (HEX_HEIGHT / 2)
         };
-
-        this.turnManager = new TurnManager(this);
-
-        this.selection = new Selection(this);
-
-        this.initSides();
-
-        this.turnManager.init();
     },
 
     /**
@@ -55,7 +51,7 @@ Level.prototype = {
      */
     preload: function() {
         game.time.advancedTiming = true;
-        game.load.image('mouseOverHex', 'sprites/hoveredHexMarker.png');
+        game.load.image('hoveredHex', 'sprites/hoveredHexMarker.png');
         game.load.image('selectedHex', 'sprites/selectedHex.png');
 
         this.loadAssets();
@@ -70,16 +66,25 @@ Level.prototype = {
      * Create Groups, Units and a bunch of other stuff
      */
     create: function() {
-
         this.terrainGroup = game.add.group();
 
         this.unitGroup = game.add.group();
 
         this.hexGroup = game.add.group();
 
-        game.stage.backgroundColor = BACKGROUND_COLOR;
+        this.markerGroup = game.add.group();
 
-        this.displayObjects = game.add.group();
+        this.turnManager = new TurnManager(this);
+
+        this.selection = new Selection(this);
+
+        this.mouseOver = new MouseOver(this);
+
+        this.initSides();
+
+        this.turnManager.init();
+
+        game.stage.backgroundColor = BACKGROUND_COLOR;
 
         this.createGrid();
 
