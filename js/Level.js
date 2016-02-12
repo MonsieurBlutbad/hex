@@ -11,15 +11,13 @@ var Level = function () {
 
     this.unitGroup;
 
-    this.selectedHex;
-
-    this.selectedUnit;
-
     this.overlay;
 
     this.worldBounds;
 
     this.turnManager;
+
+    this.selection;
 
     this.hex = [[]];
 
@@ -38,15 +36,9 @@ Level.prototype = {
             y: this.grid.height * HEX_HEIGHT + (HEX_HEIGHT / 2)
         };
 
-        this.selectionChangeEvent = new Phaser.Signal();
-        this.selectionChangeEvent.add(
-            function(hex) {
-                if(DEBUG)
-                    console.log('selectionChangeEvent', hex )
-            }
-        );
-
         this.turnManager = new TurnManager(this);
+
+        this.selection = new Selection(this);
 
         this.initSides();
 

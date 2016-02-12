@@ -64,8 +64,6 @@ TurnManager.prototype = {
     endTurn: function(level) {
         if(DEBUG)
             console.log('endTurn', this);
-        if(this.level.selectedHex)
-            this.level.selectedHex.deselect();
     },
 
     beginTurn: function() {

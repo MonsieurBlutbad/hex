@@ -150,7 +150,6 @@ Unit.prototype.showMoveableHexes = function() {
  * Selects this unit.
  */
 Unit.prototype.select = function() {
-    this.level.selectedUnit = this;
     this.highlight.visible = true;
 
     this.selectEvent.dispatch(this);
@@ -160,7 +159,6 @@ Unit.prototype.select = function() {
  * Deselects this unit.
  */
 Unit.prototype.deselect = function() {
-    this.level.selectedUnit = null;
     this.highlight.visible = false;
 
     this.deselectEvent.dispatch(this);

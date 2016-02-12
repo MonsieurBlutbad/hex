@@ -181,7 +181,7 @@ Hex.prototype.mouseout = function() {
  * Called on mouse down event.
  */
 Hex.prototype.mousedown = function() {
-    if(this.level.selectedHex === this) {
+    if(this.level.selection.hex === this) {
         this.deselect();
     } else {
         this.select();
@@ -192,32 +192,30 @@ Hex.prototype.mousedown = function() {
  * Selects this hex.
  */
 Hex.prototype.select = function() {
-    if(this.level.selectedHex)
-        this.level.selectedHex.selectedMarker.visible = false;
-    this.level.selectedHex = this;
-    this.selectedMarker.visible = true;
+    if(this.level.selection.hex)
+        this.level.selection.hex.selectedMarker.visible = false;
     if(this.hasUnit()) {
-        if(this.level.selectedUnit)
-            this.level.selectedUnit.deselect();
+        if(this.level.selection.hex && this.level.selection.hex.unit)
+            this.level.selection.hex.unit.deselect();
         this.getUnit().select();
     }
-    else if(this.level.selectedUnit) {
-        var unit = this.level.selectedUnit;
+    else if(this.level.selection.hex && this.level.selection.hex.unit) {
+        var unit = this.level.selection.hex.unit;
         if(unit.canMoveTo(this))
            unit.moveTo(this);
         else
             unit.deselect();
     }
-    this.level.selectionChangeEvent.dispatch(this);
+
+    this.level.selection.hex = this;
+    this.selectedMarker.visible = true;
+
+    this.level.selection.changeEvent.dispatch(this);
 };
 
 /**
  * Deselects this hex.
  */
 Hex.prototype.deselect = function() {
-    if(this.level.selectedUnit)
-        this.level.selectedUnit.deselect();
-    this.level.selectedHex = null;
     this.selectedMarker.visible = false;
-    this.level.selectionChangeEvent.dispatch(this);
 };
