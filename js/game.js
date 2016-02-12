@@ -10,7 +10,7 @@ const OVERLAY_WIDTH = 266;
 
 const DEBUG = true;
 
-const BACKGROUND_COLOR = '#999';
+const BACKGROUND_COLOR = '#232';
 
 var game = new Phaser.Game(WIDTH, HEIGHT);
 

@@ -82,8 +82,6 @@ Level.prototype = {
 
         this.initSides();
 
-        this.turnManager.init();
-
         game.stage.backgroundColor = BACKGROUND_COLOR;
 
         this.createGrid();
@@ -91,6 +89,8 @@ Level.prototype = {
         this.createTerrain();
 
         this.createUnits();
+
+        this.turnManager.initEvent.dispatch();
 
         this.createOverlay();
 
@@ -104,6 +104,7 @@ Level.prototype = {
         nextTurnKey.onDown.add(function() {
             this.turnManager.nextTurnEvent.dispatch(this);
         }, this);
+
     },
 
     /**
