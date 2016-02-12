@@ -8,6 +8,10 @@ var Selection = function(level) {
 
     this.level.turnManager.endTurnEvent.add(this.endTurnListener, this);
 
+    this.marker = game.add.sprite(0,0, 'selectedHex');
+    this.marker.visible = false;
+    this.level.markerGroup.add(this.marker);
+
     this.changeEvent = new Phaser.Signal();
 };
 
@@ -60,6 +64,10 @@ Selection.prototype = {
 
         this.hex.select();
 
+        this.marker.x = this.hex.x;
+        this.marker.y = this.hex.y;
+        this.marker.visible = true;
+
         this.changeEvent.dispatch(this);
     },
 
@@ -76,6 +84,8 @@ Selection.prototype = {
 
             this.hex = null;
         }
+
+        this.marker.visible = false;
 
         this.changeEvent.dispatch(this);
     },

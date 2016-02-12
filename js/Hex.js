@@ -37,14 +37,6 @@ var Hex = function (level, tileX, tileY) {
 
     this.createMoveableMarker(geometry);
 
-    this.hoveredMarker = game.add.sprite(0,0,'mouseOverHex');
-    this.hoveredMarker.visible=false;
-    this.addChild(this.hoveredMarker);
-
-    this.selectedMarker = game.add.sprite(0,0,'selectedHex');
-    this.selectedMarker.visible=false;
-    this.addChild(this.selectedMarker);
-
     if(DEBUG) {
         var style = { font: "12px Courier", fill: "#fff", align: "center" };
         var text = game.add.text(20, 10, this.tile.x + ',' + this.tile.y, style);
@@ -159,14 +151,14 @@ Hex.prototype.hideMoveable = function() {
  * Called on mouse over event.
  */
 Hex.prototype.mouseover = function() {
-    this.hoveredMarker.visible = true;
+    this.level.mouseOver.enter(this);
 };
 
 /**
  * Called on mouse out event.
  */
 Hex.prototype.mouseout = function() {
-    this.hoveredMarker.visible = false;
+    this.level.mouseOver.leave(this);
 };
 
 /**
@@ -180,7 +172,6 @@ Hex.prototype.mousedown = function() {
  * Selects this hex.
  */
 Hex.prototype.select = function() {
-    this.selectedMarker.visible = true;
     if(this.hasUnit())
         this.unit.select();
 };
@@ -189,7 +180,6 @@ Hex.prototype.select = function() {
  * Deselects this hex.
  */
 Hex.prototype.deselect = function() {
-    this.selectedMarker.visible = false;
     if(this.hasUnit())
         this.unit.deselect();
 };
