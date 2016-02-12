@@ -11,6 +11,7 @@ var MouseOver = function(level) {
     this.level.markerGroup.add(this.marker);
 
     this.changeEvent = new Phaser.Signal();
+    this.level.selection.changeEvent.add(this.onSelectionChange, this);
 };
 
 MouseOver.prototype = {
@@ -26,6 +27,18 @@ MouseOver.prototype = {
         return undefined;
     },
 
+    onSelectionChange: function() {
+        if(this.marker.children.indexOf(this.moveableMarker) !== -1)
+            this.marker.removeChild(this.moveableMarker);
+
+        if(this.level.selection.getUnit()) {
+            this.moveableMarker = game.add.sprite(0,0, this.level.selection.getUnit().spriteReference);
+            this.moveableMarker.alpha = 0.75;
+            this.moveableMarker.visible = false;
+            this.marker.addChild(this.moveableMarker);
+        }
+    },
+
     /**
      * Gets called when the given hex is entered.
      *
@@ -36,6 +49,13 @@ MouseOver.prototype = {
         this.marker.x = hex.x;
         this.marker.y = hex.y;
         this.marker.visible = true;
+        console.log(this);
+        if(this.moveableMarker) {
+            if(this.level.selection.getUnit() && this.level.selection.getUnit().canMoveTo(this.hex))
+                this.moveableMarker.visible = true;
+            else
+                this.moveableMarker.visible = false;
+        }
 
         this.changeEvent.dispatch(this);
     },
