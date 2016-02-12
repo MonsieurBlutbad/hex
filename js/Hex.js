@@ -54,9 +54,7 @@ var Hex = function (level, tileX, tileY) {
     game.add.existing(this);
 };
 
-
 Hex.prototype = Object.create(Phaser.Graphics.prototype);
-
 
 Hex.prototype.createMoveableMarker = function(geometry) {
     this.moveableMarkerGroup = game.add.group();
@@ -88,7 +86,6 @@ Hex.prototype.createMoveableMarker = function(geometry) {
 
 };
 
-
 Hex.prototype.setTerrain = function(terrain) {
     this.terrain = terrain;
 };
@@ -97,7 +94,6 @@ Hex.prototype.setTerrain = function(terrain) {
 Hex.prototype.getTerrain = function() {
     return this.terrain;
 };
-
 
 Hex.prototype.setUnit = function(unit) {
     this.unit = unit;
@@ -108,17 +104,14 @@ Hex.prototype.getUnit = function() {
     return this.unit;
 };
 
-
 Hex.prototype.hasUnit = function() {
     // todo instanceof Unit
     return this.unit !== undefined && this.unit !== null;
 };
 
-
 Hex.prototype.removeUnit = function() {
     this.unit = null;
 };
-
 
 Hex.prototype.getAdjacentHexes = function() {
 

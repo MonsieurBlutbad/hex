@@ -83,12 +83,12 @@ Overlay.prototype = {
         this.background.addChild(this.selectionTextGroup);
     },
 
-    updateSelectionText: function (hex) {
-        if(this.level.selection.hex === hex) {
-            var terrain = hex.terrain;
+    updateSelectionText: function (selection) {
+        if(selection.hex) {
+            var terrain = selection.hex.terrain;
             this.selectionText.terrain.name.setText(terrain? terrain.name : 'no name given');
             this.selectionText.terrain.movementCost.setText(terrain? terrain.movementCost : 'no movement cost given');
-            var unit = hex.unit;
+            var unit = selection.getUnit();
             this.selectionText.unit.name.setText(unit? unit.name: '');
         } else
             this.clearSelectionText();
