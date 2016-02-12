@@ -45,7 +45,7 @@ var Overlay = function(level) {
     this.createSelectionText();
     this.createRoundText();
 
-    this.level.selectionChangeEvent.add(this.updateSelectionText, this);
+    this.level.selection.changeEvent.add(this.updateSelectionText, this);
     this.level.turnManager.beginTurnEvent.add(this.updateRoundText, this);
 
     return this;
@@ -84,7 +84,7 @@ Overlay.prototype = {
     },
 
     updateSelectionText: function (hex) {
-        if(this.level.selectedHex === hex) {
+        if(this.level.selection.hex === hex) {
             var terrain = hex.terrain;
             this.selectionText.terrain.name.setText(terrain? terrain.name : 'no name given');
             this.selectionText.terrain.movementCost.setText(terrain? terrain.movementCost : 'no movement cost given');

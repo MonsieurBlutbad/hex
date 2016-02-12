@@ -158,7 +158,6 @@ Hex.prototype.showMoveable = function(cost) {
     }
 };
 
-
 Hex.prototype.hideMoveable = function() {
     this.moveableMarkerGroup.setAll('visible', false);
 };
@@ -181,43 +180,23 @@ Hex.prototype.mouseout = function() {
  * Called on mouse down event.
  */
 Hex.prototype.mousedown = function() {
-    if(this.level.selectedHex === this) {
-        this.deselect();
-    } else {
-        this.select();
-    }
+    this.level.selection.select(this);
 };
 
 /**
  * Selects this hex.
  */
 Hex.prototype.select = function() {
-    if(this.level.selectedHex)
-        this.level.selectedHex.selectedMarker.visible = false;
-    this.level.selectedHex = this;
     this.selectedMarker.visible = true;
-    if(this.hasUnit()) {
-        if(this.level.selectedUnit)
-            this.level.selectedUnit.deselect();
-        this.getUnit().select();
-    }
-    else if(this.level.selectedUnit) {
-        var unit = this.level.selectedUnit;
-        if(unit.canMoveTo(this))
-           unit.moveTo(this);
-        else
-            unit.deselect();
-    }
-    this.level.selectionChangeEvent.dispatch(this);
+    if(this.hasUnit())
+        this.unit.select();
 };
 
 /**
  * Deselects this hex.
  */
 Hex.prototype.deselect = function() {
-    if(this.level.selectedUnit)
-        this.level.selectedUnit.deselect();
-    this.level.selectedHex = null;
     this.selectedMarker.visible = false;
-    this.level.selectionChangeEvent.dispatch(this);
+    if(this.hasUnit())
+        this.unit.deselect();
 };
