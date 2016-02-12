@@ -26,6 +26,11 @@ MouseOver.prototype = {
         return undefined;
     },
 
+    /**
+     * Gets called when the given hex is entered.
+     *
+     * @param hex
+     */
     enter: function(hex) {
         this.hex = hex;
         this.marker.x = hex.x;
@@ -35,7 +40,10 @@ MouseOver.prototype = {
         this.changeEvent.dispatch(this);
     },
 
-    leave: function() {
+    /**
+     * Gets called when the given hex is left.
+     */
+    leave: function(hex) {
         this.hex = undefined;
         this.marker.visible = false;
 

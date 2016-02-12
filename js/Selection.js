@@ -77,9 +77,6 @@ Selection.prototype = {
     deselect: function() {
         if(this.hex) {
 
-            if(this.hex.unit)
-                this.hex.unit.deselect();
-
             this.hex.deselect();
 
             this.hex = null;
