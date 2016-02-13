@@ -49,7 +49,6 @@ MouseOver.prototype = {
         this.marker.x = hex.x;
         this.marker.y = hex.y;
         this.marker.visible = true;
-        console.log(this);
         if(this.moveableMarker) {
             if(this.level.selection.getUnit() && this.level.selection.getUnit().canMoveTo(this.hex))
                 this.moveableMarker.visible = true;

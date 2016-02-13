@@ -23,9 +23,13 @@ var Level = function () {
 
     this.mouseOver;
 
+    // TODO
+    this.isDragging = false;
+
     this.hex = [[]];
 
     this.sides = [];
+
 };
 
 
@@ -66,6 +70,8 @@ Level.prototype = {
      * Create Groups, Units and a bunch of other stuff
      */
     create: function() {
+        game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
+
         this.terrainGroup = game.add.group();
 
         this.unitGroup = game.add.group();
@@ -165,6 +171,7 @@ Level.prototype = {
      * Updates the camera position
      */
     updateCamera: function () {
+        // Keyboard Movement
         // Horizontal Movement
         if(cursors.left.isDown || game.input.keyboard.isDown(Phaser.Keyboard.A)) {
             game.camera.x -= 10;
@@ -177,6 +184,27 @@ Level.prototype = {
         } else if(cursors.down.isDown || game.input.keyboard.isDown(Phaser.Keyboard.S)) {
             game.camera.y += 10;
         }
+        // Mouse Movement
+        // Drag Movement
+        if (game.input.activePointer.rightButton.isDown) {
+            if (game.origDragPoint) {
+                var dragX = game.origDragPoint.x - game.input.activePointer.position.x;
+                var dragY = game.origDragPoint.y - game.input.activePointer.position.y;
+                if(dragX + dragY !== 0) {
+                    // move the camera by the amount the mouse has moved since last update
+                    game.camera.x += dragX;
+                    game.camera.y += dragY;
+                    this.isDragging = true;
+                }
+            }
+            // set new drag origin to current position
+            game.origDragPoint = game.input.activePointer.position.clone();
+        } else {
+            game.origDragPoint = null;
+            this.isDragging = false;
+
+        }
+
     },
 
     /**

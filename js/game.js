@@ -14,6 +14,8 @@ const BACKGROUND_COLOR = '#232';
 
 var game = new Phaser.Game(WIDTH, HEIGHT);
 
+
+
 window.onload = function () {
 
     var body = document.getElementById('body');
@@ -21,6 +23,7 @@ window.onload = function () {
     game.state.add('Test', States.Test);
 
     game.state.start('Test');
+
 
     body.style.width = WIDTH + 'px';
 

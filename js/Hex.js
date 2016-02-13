@@ -28,10 +28,8 @@ var Hex = function (level, tileX, tileY) {
 
     this.inputEnabled = true;
 
-    if(DEBUG)
-        this.events.onInputDown.add(function() { console.log('onInputDown', this)}, this);
     this.events.onInputDown.add(this.mousedown, this);
-
+    this.events.onInputUp.add(this.mouseup, this);
     this.events.onInputOver.add(this.mouseover, this);
     this.events.onInputOut.add(this.mouseout, this);
 
@@ -164,8 +162,17 @@ Hex.prototype.mouseout = function() {
 /**
  * Called on mouse down event.
  */
-Hex.prototype.mousedown = function() {
-    this.level.selection.select(this);
+Hex.prototype.mousedown = function(hex, pointer) {
+    if(pointer.button === Phaser.Mouse.LEFT_BUTTON)
+        this.level.selection.select(this);
+};
+
+/**
+ * Called on mouse up event.
+ */
+Hex.prototype.mouseup = function(hex, pointer) {
+    if(pointer.button === Phaser.Mouse.RIGHT_BUTTON && !this.level.isDragging)
+        this.level.selection.deselect(this);
 };
 
 /**
